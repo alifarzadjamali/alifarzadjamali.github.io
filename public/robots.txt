@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://alifarzadjamali.github.io/sitemap.xml

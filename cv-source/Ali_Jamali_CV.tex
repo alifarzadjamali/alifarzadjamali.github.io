@@ -1,0 +1,297 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=0.67in]{geometry}
+\usepackage{enumitem}
+\usepackage[explicit]{titlesec}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{needspace}
+\hypersetup{pdftitle={Ali (Farzad) Jamali - CV},pdfauthor={Ali (Farzad)
+Jamali}}
+
+\definecolor{heading}{HTML}{17365D}
+\definecolor{nameaccent}{HTML}{C00000}
+\widowpenalty=10000
+\clubpenalty=10000
+\pagestyle{empty}
+\renewcommand{\normalsize}{\fontsize{10pt}{14pt}\selectfont}
+\normalsize
+\let\cvOriginalTextbf\textbf
+\renewcommand{\textbf}[1]{{\fontsize{10.5pt}{14pt}\selectfont\cvOriginalTextbf{#1}}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5pt}
+\setlist[itemize]{leftmargin=1.2em,topsep=3pt,itemsep=3pt,parsep=0pt,partopsep=0pt}
+\titleformat{\section}{\color{heading}\bfseries\fontsize{12.5pt}{15pt}\selectfont}{}{0pt}{#1}[\titlerule]
+\titlespacing*{\section}{0pt}{8pt}{6pt}
+\providecommand{\tightlist}{\setlength{\itemsep}{3pt}\setlength{\parskip}{0pt}}
+
+\begin{document}
+
+\begin{center}
+  {\fontsize{15pt}{18pt}\selectfont\bfseries ALI {\color{nameaccent}(FARZAD)} JAMALI}\\[2pt]
+  {\normalsize\itshape AI \& Computer Vision Engineer \textbar{} MPhil
+Researcher}\\[3pt]
+  Manchester, UK | +44 7760 814542 |
+  \href{mailto:ali292jamali@gmail.com}{ali292jamali@gmail.com}\\[2pt]
+  \href{https://www.linkedin.com/in/alifarzadjamali/}{LinkedIn} | \href{https://github.com/alifarzadjamali}{GitHub} | \href{https://scholar.google.com/citations?hl=en\&user=xd6LP18AAAAJ}{Google
+Scholar} | \href{https://orcid.org/0009-0001-0678-4155}{ORCID}
+
+\end{center}
+
+\section{Profile}\label{profile}
+
+I am an AI and Computer Vision engineer with research experience at the
+University of Salford. I build AI systems that work on real industrial
+and commercial data. My projects include extracting structured data from
+images and technical documents and detecting anomalies and defects in
+industrial images. I have also built deep learning based recommendation
+systems and intelligent analytics dashboards for World Privilege Plus.
+In my research, I work with Gen AI and LLMs, including their use,
+improvement and evaluation. My mechanical engineering background helps
+me connect these methods to real engineering problems.
+
+\section{Technical Skills}\label{technical-skills}
+
+\textbf{Computer Vision:} segmentation, OCR, document intelligence,
+defect detection, image preprocessing, geometry extraction, leakage-safe
+evaluation \emph{(OpenCV, Tesseract, U-Net, SegFormer)}.
+
+\textbf{Machine Learning:} transfer learning, embeddings, confidence
+calibration, robustness testing, statistical evaluation, error analysis
+\emph{(scikit-learn)}.
+
+\textbf{Deep Learning:} model training and fine-tuning, vision-language
+model adaptation \emph{(PyTorch, torchvision, Hugging Face
+Transformers)}.
+
+\textbf{LLMs \& MLLMs:} multimodal representation learning,
+retrieval-augmented generation (RAG), recommender systems,
+evidence-grounded explanation and verification, agentic workflows, LLM
+behaviour evaluation \emph{(CLIP, SigLIP2, LangChain, ChromaDB,
+Ollama)}.
+
+\textbf{Software \& Data:} Python, SQL, Pandas, NumPy, FastAPI, REST
+APIs, DuckDB, Parquet, Docker, Git, Linux, Streamlit, pytest, uv.
+
+\textbf{Engineering:} technical drawings, stress analysis \emph{(AutoCAD
+Mechanical, SolidWorks, CATIA)}.
+
+\section{Applied AI \& Research
+Projects}\label{applied-ai-research-projects}
+
+\textbf{Floor Plan Document Intelligence} \emph{\textbar{} Independent
+project (real client brief), 2026}
+
+\begin{itemize}
+\item
+  Built a pipeline on CubiCasa5K that turns floor-plan images and PDF
+  pages into structured building data. Combined SegFormer-B0
+  segmentation, Tesseract OCR and vector geometry to find rooms and
+  openings and link them to text labels.
+\item
+  Raised five-class mIoU from a classical baseline of 0.312 to 0.577 on
+  held-out data. Added a Streamlit interface for reviewing results and
+  confidence scores.
+\end{itemize}
+
+\textbf{Recommendation \& Analytics Platform} \emph{\textbar{} Delivered
+to World Privilege Plus, 2025--2026}
+
+\begin{itemize}
+\item
+  Built a deep learning based, semantic-aware recommendation and
+  analytics platform independently for a rewards business with over 4
+  million members. Used Python and FastAPI for data processing, model
+  training and real-time predictions, with DuckDB and Parquet for
+  analytics.
+\item
+  Turned business requirements into a working system, explained the
+  results to non-technical colleagues and handed over the completed
+  platform for use in the business.
+\end{itemize}
+
+\textbf{Industrial Fabric Defect Inspection} \emph{\textbar{}
+Independent project (real client brief), 2026}
+
+\begin{itemize}
+\item
+  Built a defect segmentation pipeline on the AITEX dataset using
+  PyTorch and OpenCV. Compared a classical texture baseline with a
+  U-Net/ResNet-18 model and processed full-resolution images in tiles.
+\item
+  Used a locked holdout set to control for data leakage. Dice rose from
+  0.259 to 0.532, with image-level ROC-AUC of 0.878.
+\end{itemize}
+
+\newpage
+
+\textbf{Evidence-Constrained Multimodal Fashion Recommendation}
+\emph{\textbar{} MPhil thesis project}
+
+\begin{itemize}
+\item
+  Built a multimodal fashion recommender using CLIP image and text
+  embeddings for similarity search, then reranked candidates using a
+  200-rule fashion knowledge base. Generated explanations with RAG using
+  the exact rules behind each recommendation.
+\item
+  Verified every explanation automatically. Extracted atomic claims and
+  checked each one against the rule evidence, across 1,000 test cases
+  and three open-source LLMs.
+\item
+  Supplying the exact rule trace raised trace-supported claims by 21
+  percentage points (95\% CI 19.7 to 22.4). Reported that reranking
+  itself did not improve retrieval metrics.
+\end{itemize}
+
+\textbf{LLM Output Homogenization} \emph{\textbar{} NLP \& LLM
+Evaluation}
+
+\emph{(Manuscript in preparation for journal submission)}
+
+\begin{itemize}
+\item
+  Compared text generated by multiple LLMs across different datasets to
+  study similarities and differences in their outputs.
+\item
+  Used text embeddings and semantic similarity analysis to evaluate
+  response diversity and consistency.
+\end{itemize}
+
+\href{https://github.com/alifarzadjamali/LLM-output-homogenization}{GitHub:
+LLM-output-homogenization}
+
+\textbf{RepBench-Fashion} \emph{\textbar{} Research paper (in
+preparation)}
+
+\begin{itemize}
+\item
+  Built a controlled benchmark of seven frozen visual representations,
+  including ResNet50, DINOv3, CLIP and SigLIP2, for fashion outfit
+  compatibility. Tested across Polyvore, IQON3000 and a human-grounded
+  external set, with no item or outfit overlap between training and
+  test.
+\item
+  Found that contrastive vision-language models beat ResNet50 and DINOv3
+  on both datasets (ROC-AUC about 0.89 against 0.69 on Polyvore).
+  Fashion-specialised models were not consistently better. Used
+  bootstrap intervals with Holm correction.
+\end{itemize}
+
+\section{Teaching Experience}\label{teaching-experience}
+
+\textbf{Hourly Paid Academic (HPA) -- Deep Learning \textbar{}
+University of Salford}
+
+\emph{Sep 2026 -- Present \textbar{} Salford, UK}
+
+\begin{itemize}
+\tightlist
+\item
+  Run Deep Learning workshops for undergraduate and postgraduate
+  students and supervise their work. Help them write and debug code in
+  Python, TensorFlow and PyTorch.
+\end{itemize}
+
+\section{Engineering \& Data
+Experience}\label{engineering-data-experience}
+
+\textbf{Data Analyst \textbar{} Nilper}
+
+\emph{Sep 2023 -- Sep 2025 \textbar{} Iran}
+
+\begin{itemize}
+\tightlist
+\item
+  Analysed sales, product and quality data across more than 20 product
+  categories. Built dashboards and reports to support day-to-day
+  business decisions.
+\end{itemize}
+
+\textbf{Data Analyst \textbar{} Solico Group}
+
+\emph{Sep 2021 -- Mar 2023 \textbar{} Iran}
+
+\begin{itemize}
+\tightlist
+\item
+  Automated KPI reports for forecasting and performance tracking.
+  Analysed consumer, campaign and product category data.
+\end{itemize}
+
+\textbf{Mechanical Engineer \textbar{} Padideh Sanat Ouj Co.}
+
+\emph{2019 \textbar{} Iran}
+
+\begin{itemize}
+\tightlist
+\item
+  Worked on hydrotest and hydroforming equipment, using SolidWorks and
+  CATIA to design and analyse components including bolts, clamps and
+  bearings.
+\end{itemize}
+
+\textbf{Mechanical Design \& Simulation Intern \textbar{} SAIPA Corp.}
+
+\emph{2014 \textbar{} Iran}
+
+\begin{itemize}
+\tightlist
+\item
+  Produced orthographic and three-view drawings for manufacturing jigs
+  and fixtures in AutoCAD Mechanical. Assisted with mechanical design
+  and simulation.
+\end{itemize}
+
+\newpage
+
+\section{Education}\label{education}
+
+\textbf{MPhil, Computer Science \& Artificial Intelligence \textbar{}
+University of Salford}
+
+\emph{Sep 2025 -- Expected Nov 2026 \textbar{} Salford, UK}
+
+\begin{itemize}
+\tightlist
+\item
+  Thesis on evidence-grounded fashion recommendation. Built and
+  evaluated a multimodal recommender that explains its choices and
+  verifies those explanations against a knowledge base.
+\end{itemize}
+
+\textbf{MSc Mechanical Engineering -- Dynamics, Control \& Vibrations
+\textbar{} Shahid Beheshti University}
+
+\emph{2016 -- 2019 \textbar{} Tehran, Iran}
+
+\begin{itemize}
+\tightlist
+\item
+  Researched solar tracking, mechanical design, modelling and control.
+  Completed two engineering drawing modules and used CAD tools for
+  design and stress analysis.
+\end{itemize}
+
+\textbf{BSc Mechanical Engineering \textbar{} Semnan University}
+
+\emph{2012 -- 2016 \textbar{} Semnan, Iran}
+
+\section{Publication \& Additional
+Information}\label{publication-additional-information}
+
+\href{https://mme.modares.ac.ir/article_11271.html}{Experimental
+evaluation of the open-loop control method for a dual-axis solar
+tracker}. \emph{Modares Mechanical Engineering}, 23(02), 127--138, 2023.
+DOI: \href{https://doi.org/10.52547/mme.23.2.127}{10.52547/mme.23.2.127}
+
+\textbf{Mobility:} Open to relocation within the UK.
+
+\textbf{Languages:} Persian (native), English (full professional; IELTS
+7.5).
+
+\end{document}
