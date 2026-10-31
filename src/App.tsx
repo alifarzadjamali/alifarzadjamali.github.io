@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 
@@ -62,7 +62,20 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const sections = navigation
+      .map(([, href]) => document.querySelector<HTMLElement>(href))
+      .filter((section): section is HTMLElement => section !== null)
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+      if (visible[0]) setActiveSection(`#${visible[0].target.id}`)
+    }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] })
+    sections.forEach(section => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div className="site-shell">
@@ -72,7 +85,7 @@ function App() {
           <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F<span>.</span></span><span>FARZAD JAMALI</span></a>
           <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
           <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation" onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}>
-            {navigation.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}</a>)}
+            {navigation.map(([label, href]) => <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>)}
             <a className="nav-cv" href={content.cv.href} download onClick={() => setMenuOpen(false)}>CV <Arrow diagonal /></a>
           </nav>
         </div>
