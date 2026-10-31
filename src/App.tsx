@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 
@@ -63,7 +63,28 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
+    }
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!(event.target instanceof Node) || menuButtonRef.current?.contains(event.target) || document.getElementById('site-navigation')?.contains(event.target)) return
+      setMenuOpen(false)
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape)
+      document.removeEventListener('pointerdown', closeOnOutsideClick)
+    }
+  }, [menuOpen])
 
   useEffect(() => {
     const sections = navigation
@@ -83,8 +104,8 @@ function App() {
       <header className="site-header">
         <div className="container header-inner">
           <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F<span>.</span></span><span>FARZAD JAMALI</span></a>
-          <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
-          <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation" onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}>
+          <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
+          <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
             {navigation.map(([label, href]) => <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>)}
             <a className="nav-cv" href={content.cv.href} download onClick={() => setMenuOpen(false)}>CV <Arrow diagonal /></a>
           </nav>
