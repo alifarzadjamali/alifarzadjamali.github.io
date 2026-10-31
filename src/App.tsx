@@ -46,11 +46,11 @@ function ProjectVisual({ type }: { type: Project['visual'] }) {
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const reducedMotion = useReducedMotion()
   return (
-    <motion.article className="project-card" initial={reducedMotion ? false : { opacity: 0, y: 20 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.45, delay: index * 0.07 }}>
+    <motion.article id={`project-${project.number}`} className="project-card" aria-labelledby={`project-title-${project.number}`} initial={reducedMotion ? false : { opacity: 0, y: 20 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.45, delay: index * 0.07 }}>
       <ProjectVisual type={project.visual} />
       <div className="project-body">
         <div className="project-meta"><span>{project.number} / {project.category}</span><span>SELECTED WORK</span></div>
-        <h3>{project.title}</h3>
+        <h3 id={`project-title-${project.number}`}><a className="project-permalink" href={`#project-${project.number}`} aria-label={`Link to ${project.title}`}>{project.title}<span aria-hidden="true"> #</span></a></h3>
         <p className="project-summary">{project.summary}</p>
         <p className="project-detail">{project.detail}</p>
         <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
