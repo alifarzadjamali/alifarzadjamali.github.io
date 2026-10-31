@@ -16,3 +16,14 @@
 .project-card{scroll-margin-top:100px}.project-permalink span{color:#a3dec5;opacity:0;font-size:.65em}.project-permalink:hover span,.project-permalink:focus-visible span{opacity:1}
 .copy-email-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:18px;min-height:30px}.copy-email-row button{padding:4px 0;border:0;border-bottom:1px solid #93c1a7;background:transparent;color:#b8dfcd;font-size:12px;cursor:pointer}.copy-email-row button:hover{color:#fff}.copy-email-row span{font-size:12px;color:#a4b8ae}
 .hero-bottom,.hero-aside-top,.hero-aside-bottom,.project-meta span:last-child,.footer-inner,.location{color:#a9bdb2}.section-kicker span:first-child,.timeline .mini-label{color:#a4b9ad}.button:focus-visible,.menu-toggle:focus-visible,.copy-email-row button:focus-visible{outline:3px solid #d1f6e5;outline-offset:4px}
+@media print{
+  :root{color:#17251f;background:#fff}
+  body,.hero,.section,.projects-section,.experience-section,.skills-section,.contact-section,.site-footer{color:#17251f;background:#fff}
+  .site-header,.hero-grid,.hero-bottom,.hero-aside,.hero-actions,.project-visual,.cv-section,.copy-email-row,.site-footer,.skip-link{display:none!important}
+  .container{width:100%}.hero{min-height:0}.hero-content{display:block;padding:0 0 24px}.hero h1{font-size:36pt;margin:12px 0}.hero h1 span{color:inherit}
+  .hero-role,.hero-intro,.about-copy p,.project-summary,.project-detail,.research-content p,.timeline p,.teaching-card p,.contact-intro{color:#273a31}
+  .section{padding:18px 0;border-color:#a6b2aa;break-inside:avoid}.section-heading h2{font-size:24pt}.section-kicker,.mini-label,.project-meta{color:#345244}
+  .about-grid,.research-grid,.teaching-grid,.contact-grid,.project-card{display:block}.about-copy{padding-top:12px}.project-list{margin-top:16px}.project-card{min-height:0;padding:12px 0;border:0;border-top:1px solid #b3c2b9;break-inside:avoid}.project-body{padding:0}.project-body h3{margin:10px 0}.project-permalink span{display:none}
+  .research-content{border:0;padding:0}.skills-grid{margin-top:15px}.skill-group{padding:12px}.contact-links{padding-top:12px;justify-self:start}.contact-email{color:#17251f}
+  a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;overflow-wrap:anywhere}
+}
