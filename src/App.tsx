@@ -69,11 +69,22 @@ function App() {
   const [localTime, setLocalTime] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
   const [projectFilter, setProjectFilter] = useState('All')
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setSearchOpen(open => !open) }
+      if (event.key === 'Escape') setSearchOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   useEffect(() => {
     if (reducedMotion) return
@@ -138,6 +149,7 @@ function App() {
         <div className="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(scrollProgress)} style={{ width: `${scrollProgress}%` }} />
         <div className="container header-inner">
           <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F<span>.</span></span><span>FARZAD JAMALI</span></a>
+          <button className="quick-nav-trigger" type="button" onClick={() => setSearchOpen(true)}>Jump to… <kbd>⌘ K</kbd></button>
           <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
           <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
             {navigation.map(([label, href]) => <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>)}
@@ -195,6 +207,7 @@ function App() {
 
         <section className="section contact-section" id="contact" aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="07" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>ali292jamali@gmail.com <Arrow diagonal /></a><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText('ali292jamali@gmail.com'); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a><a href={content.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href="/farzad-jamali.vcf" download>Save contact <Arrow diagonal /></a><span className="location">{content.location}</span></div></div></section>
       </main>
+      {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) setSearchOpen(false) }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation"><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} /><button type="button" onClick={() => setSearchOpen(false)} aria-label="Close quick navigation">Esc</button></div><div className="quick-nav-results">{[...navigation.map(([label, href]) => ({ label, href })), ...content.projects.map(project => ({ label: project.title, href: `#project-${project.number}` }))].filter(item => item.label.toLowerCase().includes(searchQuery.toLowerCase())).map(item => <a key={item.href} href={item.href} onClick={() => { setSearchOpen(false); setSearchQuery('') }}>{item.label}<Arrow /></a>)}</div></div></div>}
       <a className={`back-to-top ${scrollProgress > 18 ? 'is-visible' : ''}`} href="#top" aria-label="Back to top" tabIndex={scrollProgress > 18 ? 0 : -1}>↑</a>
       <footer className="site-footer"><div className="container footer-inner"><span>© {new Date().getFullYear()} {content.name}</span><span>Built with care and clear evidence.</span><a href="#top">Back to top ↑</a></div></footer>
     </div>
