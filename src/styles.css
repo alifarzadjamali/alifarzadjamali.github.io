@@ -18,6 +18,9 @@
 .back-to-top.is-visible{opacity:1;transform:translateY(0);pointer-events:auto}.back-to-top:hover{background:#b6dfcf;color:#0b1118}
 .local-time{color:#c8ecdb;font-variant-numeric:tabular-nums;white-space:nowrap}
 .hero-focus{display:inline-flex;align-items:center;gap:14px;margin:0 0 18px;padding:8px 12px;border:1px solid #8caf9c58;color:#c3e5d5;font-size:12px}.hero-focus span{font-size:9px;letter-spacing:.15em;color:#80a994}
+.hero::before{content:"";position:absolute;inset:8% 5% 8% 45%;border-radius:50%;background:radial-gradient(circle,#44a88825 0%,#4d8fa51a 30%,transparent 68%);filter:blur(32px);pointer-events:none;animation:hero-drift 12s ease-in-out infinite alternate}
+@keyframes hero-drift{from{transform:translate(-4%,3%) scale(.9)}to{transform:translate(5%,-4%) scale(1.15)}}
+@media(prefers-reduced-motion:reduce){.hero::before{animation:none}}
 .project-card{scroll-margin-top:100px}.project-permalink span{color:#a3dec5;opacity:0;font-size:.65em}.project-permalink:hover span,.project-permalink:focus-visible span{opacity:1}
 .copy-email-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:18px;min-height:30px}.copy-email-row button{padding:4px 0;border:0;border-bottom:1px solid #93c1a7;background:transparent;color:#b8dfcd;font-size:12px;cursor:pointer}.copy-email-row button:hover{color:#fff}.copy-email-row span{font-size:12px;color:#a4b8ae}
 .hero-bottom,.hero-aside-top,.hero-aside-bottom,.project-meta span:last-child,.footer-inner,.location{color:#a9bdb2}.section-kicker span:first-child,.timeline .mini-label{color:#a4b9ad}.button:focus-visible,.menu-toggle:focus-visible,.copy-email-row button:focus-visible{outline:3px solid #d1f6e5;outline-offset:4px}
