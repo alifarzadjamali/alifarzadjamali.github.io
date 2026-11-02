@@ -72,6 +72,7 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [contactTopic, setContactTopic] = useState('AI collaboration')
+  const [shareStatus, setShareStatus] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
@@ -169,7 +170,7 @@ function App() {
               <p className="hero-role">{content.role}</p>
               <p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span>{content.focus[focusIndex]}</p>
               <p className="hero-intro">{content.intro}</p>
-              <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a></div>
+              <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a><button className="button button-share" type="button" onClick={async () => { try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }) } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch { setShareStatus('Sharing unavailable') } }}>Share ↗</button></div><span className="sr-only" role="status">{shareStatus}</span>
             </motion.div>
             <div className="hero-aside" aria-label="Portfolio focus areas">
               <div className="hero-aside-top"><span>01 / 03</span><span>AREAS OF FOCUS</span></div>
