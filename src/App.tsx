@@ -64,6 +64,7 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [localTime, setLocalTime] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
+  const [projectFilter, setProjectFilter] = useState('All')
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
@@ -167,7 +168,7 @@ function App() {
         </section>
 
         <section className="section projects-section" id="projects" aria-labelledby="projects-title">
-          <div className="container"><SectionHeading id="projects-title" number="02" eyebrow="FEATURED PROJECTS" title="Selected work." description="A closer look at systems, methods, and the boundaries of what each project can claim." /><div className="project-list">{content.projects.map((project, index) => <ProjectCard key={project.number} project={project} index={index} />)}</div></div>
+          <div className="container"><SectionHeading id="projects-title" number="02" eyebrow="FEATURED PROJECTS" title="Selected work." description="A closer look at systems, methods, and the boundaries of what each project can claim." /><div className="project-filters" role="group" aria-label="Filter projects">{['All', ...content.projects.map(project => project.category)].map(filter => <button key={filter} type="button" aria-pressed={projectFilter === filter} onClick={() => setProjectFilter(filter)}>{filter}</button>)}</div><div className="project-list">{content.projects.filter(project => projectFilter === 'All' || project.category === projectFilter).map((project, index) => <ProjectCard key={project.number} project={project} index={index} />)}</div></div>
         </section>
 
         <section className="section research-section" id="research" aria-labelledby="research-title">
