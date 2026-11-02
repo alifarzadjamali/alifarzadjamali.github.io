@@ -62,11 +62,19 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [localTime, setLocalTime] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const updateTime = () => setLocalTime(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()))
+    updateTime()
+    const timer = window.setInterval(updateTime, 30_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     const updateProgress = () => {
@@ -140,7 +148,7 @@ function App() {
             <div className="hero-aside" aria-label="Portfolio focus areas">
               <div className="hero-aside-top"><span>01 / 03</span><span>AREAS OF FOCUS</span></div>
               {content.focus.map((item, index) => <div className="focus-row" key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow diagonal /></div>)}
-              <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
+              <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
           <div className="container hero-bottom"><span>SCROLL TO EXPLORE</span><span>PORTFOLIO / 2026</span></div>
