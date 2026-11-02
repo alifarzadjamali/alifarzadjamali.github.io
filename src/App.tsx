@@ -155,7 +155,7 @@ function App() {
             </motion.div>
             <div className="hero-aside" aria-label="Portfolio focus areas">
               <div className="hero-aside-top"><span>01 / 03</span><span>AREAS OF FOCUS</span></div>
-              {content.focus.map((item, index) => <div className="focus-row" key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow diagonal /></div>)}
+              {content.focus.map((item, index) => <a className="focus-row" href={['#project-02', '#project-01', '#research'][index]} key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow diagonal /></a>)}
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
