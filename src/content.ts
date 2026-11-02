@@ -7,6 +7,7 @@ export type Project = {
   tags: string[]
   repository: string
   visual: 'fashion' | 'floorplan'
+  stages: { label: string; description: string }[]
 }
 
 export type PortfolioContent = {
@@ -47,6 +48,11 @@ export const content: PortfolioContent = {
       tags: ['CLIP', 'Retrieval', 'Reranking', 'Grounded explanations'],
       repository: 'https://github.com/alifarzadjamali/evidence-based-fashion-recommender',
       visual: 'fashion',
+      stages: [
+        { label: 'Retrieve', description: 'Match product images and text with multimodal embeddings.' },
+        { label: 'Rerank', description: 'Apply source-linked styling rules to the candidate set.' },
+        { label: 'Explain', description: 'Generate explanations and check their support against evidence.' },
+      ],
     },
     {
       number: '02',
@@ -57,6 +63,11 @@ export const content: PortfolioContent = {
       tags: ['SegFormer', 'OCR', 'Geometry', 'Evaluation'],
       repository: 'https://github.com/farzadismyid/floor-plan-document-intelligence',
       visual: 'floorplan',
+      stages: [
+        { label: 'Segment', description: 'Predict five classes from a raster floor plan.' },
+        { label: 'Read', description: 'Extract text tokens with OCR and conservative spatial links.' },
+        { label: 'Review', description: 'Inspect approximate polygons and JSON before use.' },
+      ],
     },
   ],
   research: {
