@@ -142,7 +142,7 @@ function App() {
       </header>
 
       <main id="main">
-        <section className="hero" id="top" aria-labelledby="hero-title">
+        <section className="hero" id="top" aria-labelledby="hero-title" onPointerMove={event => { if (reducedMotion || event.pointerType === 'touch') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`) }}>
           <div className="hero-grid" aria-hidden="true" />
           <div className="container hero-content">
             <motion.div className="hero-copy max-w-[680px]" initial={reducedMotion ? false : { opacity: 0, y: 18 }} animate={reducedMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>

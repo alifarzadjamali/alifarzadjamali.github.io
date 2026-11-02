@@ -21,6 +21,7 @@
 .hero::before{content:"";position:absolute;inset:8% 5% 8% 45%;border-radius:50%;background:radial-gradient(circle,#44a88825 0%,#4d8fa51a 30%,transparent 68%);filter:blur(32px);pointer-events:none;animation:hero-drift 12s ease-in-out infinite alternate}
 @keyframes hero-drift{from{transform:translate(-4%,3%) scale(.9)}to{transform:translate(5%,-4%) scale(1.15)}}
 @media(prefers-reduced-motion:reduce){.hero::before{animation:none}}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(320px circle at var(--pointer-x,-500px) var(--pointer-y,-500px),#a7ebc112,transparent 70%)}
 .project-card{scroll-margin-top:100px}.project-permalink span{color:#a3dec5;opacity:0;font-size:.65em}.project-permalink:hover span,.project-permalink:focus-visible span{opacity:1}
 .copy-email-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:18px;min-height:30px}.copy-email-row button{padding:4px 0;border:0;border-bottom:1px solid #93c1a7;background:transparent;color:#b8dfcd;font-size:12px;cursor:pointer}.copy-email-row button:hover{color:#fff}.copy-email-row span{font-size:12px;color:#a4b8ae}
 .hero-bottom,.hero-aside-top,.hero-aside-bottom,.project-meta span:last-child,.footer-inner,.location{color:#a9bdb2}.section-kicker span:first-child,.timeline .mini-label{color:#a4b9ad}.button:focus-visible,.menu-toggle:focus-visible,.copy-email-row button:focus-visible{outline:3px solid #d1f6e5;outline-offset:4px}
