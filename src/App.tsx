@@ -61,11 +61,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 }
 
 function App() {
+  const [scrollProgress, setScrollProgress] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0)
+    }
+    updateProgress()
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', updateProgress)
+    return () => { window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress) }
+  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -103,6 +115,7 @@ function App() {
     <div className="site-shell">
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
+        <div className="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(scrollProgress)} style={{ width: `${scrollProgress}%` }} />
         <div className="container header-inner">
           <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F<span>.</span></span><span>FARZAD JAMALI</span></a>
           <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
