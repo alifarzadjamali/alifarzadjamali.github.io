@@ -46,6 +46,7 @@ function ProjectVisual({ type }: { type: Project['visual'] }) {
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const reducedMotion = useReducedMotion()
   const [stageIndex, setStageIndex] = useState(0)
+  const [linkStatus, setLinkStatus] = useState('')
   return (
     <motion.article id={`project-${project.number}`} className="project-card" aria-labelledby={`project-title-${project.number}`} initial={reducedMotion ? false : { opacity: 0, y: 20 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.45, delay: index * 0.07 }}>
       <ProjectVisual type={project.visual} />
@@ -57,6 +58,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <div className="project-stages" aria-label={`${project.title} workflow`}><div className="stage-buttons">{project.stages.map((stage, stageNumber) => <button key={stage.label} type="button" aria-pressed={stageIndex === stageNumber} onClick={() => setStageIndex(stageNumber)}>{stageNumber + 1}. {stage.label}</button>)}</div><p role="status">{project.stages[stageIndex].description}</p></div>
         <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
         <a className="text-link" href={project.repository} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} repository (opens in a new tab)`}>View repository <Arrow diagonal /></a>
+        <button className="project-copy" type="button" onClick={async () => { try { await navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#project-${project.number}`); setLinkStatus('Project link copied') } catch { setLinkStatus('Copy unavailable') } }}>Copy project link <span aria-hidden="true">↗</span></button><span className="sr-only" role="status">{linkStatus}</span>
       </div>
     </motion.article>
   )
