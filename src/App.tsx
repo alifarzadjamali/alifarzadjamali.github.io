@@ -63,11 +63,18 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [localTime, setLocalTime] = useState('')
+  const [focusIndex, setFocusIndex] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [copyStatus, setCopyStatus] = useState('')
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (reducedMotion) return
+    const timer = window.setInterval(() => setFocusIndex(index => (index + 1) % content.focus.length), 3600)
+    return () => window.clearInterval(timer)
+  }, [reducedMotion])
 
   useEffect(() => {
     const updateTime = () => setLocalTime(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()))
@@ -142,6 +149,7 @@ function App() {
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
               <h1 id="hero-title">Building AI<br /><span>with clarity.</span></h1>
               <p className="hero-role">{content.role}</p>
+              <p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span>{content.focus[focusIndex]}</p>
               <p className="hero-intro">{content.intro}</p>
               <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a></div>
             </motion.div>
