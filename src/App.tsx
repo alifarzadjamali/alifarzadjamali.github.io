@@ -102,7 +102,9 @@ function App() {
 
   useEffect(() => {
     if (reducedMotion) return
-    const timer = window.setInterval(() => setFocusIndex(index => (index + 1) % content.focus.length), 3600)
+    const timer = window.setInterval(() => {
+      if (!document.hidden) setFocusIndex(index => (index + 1) % content.focus.length)
+    }, 3600)
     return () => window.clearInterval(timer)
   }, [reducedMotion])
 
