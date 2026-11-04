@@ -37,9 +37,10 @@
 .copy-email-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:18px;min-height:30px}.copy-email-row button{padding:4px 0;border:0;border-bottom:1px solid #93c1a7;background:transparent;color:#b8dfcd;font-size:12px;cursor:pointer}.copy-email-row button:hover{color:#fff}.copy-email-row span{font-size:12px;color:#a4b8ae}
 .hero-bottom,.hero-aside-top,.hero-aside-bottom,.project-meta span:last-child,.footer-inner,.location{color:#a9bdb2}.section-kicker span:first-child,.timeline .mini-label{color:#a4b9ad}.button:focus-visible,.menu-toggle:focus-visible,.copy-email-row button:focus-visible{outline:3px solid #d1f6e5;outline-offset:4px}
 @media print{
+  .project-list > [hidden]{display:block!important}
   :root{color:#17251f;background:#fff}
   body,.hero,.section,.projects-section,.experience-section,.skills-section,.contact-section,.site-footer{color:#17251f;background:#fff}
-  .site-header,.hero-grid,.hero-bottom,.hero-aside,.hero-actions,.project-visual,.cv-section,.copy-email-row,.site-footer,.skip-link{display:none!important}
+  .site-header,.hero-grid,.hero-bottom,.hero-aside,.hero-actions,.project-visual,.project-filters,.project-stages,.project-copy,.inline-status,.cv-section,.copy-email-row,.site-footer,.skip-link{display:none!important}
   .container{width:100%}.hero{min-height:0}.hero-content{display:block;padding:0 0 24px}.hero h1{font-size:36pt;margin:12px 0}.hero h1 span{color:inherit}
   .hero-role,.hero-intro,.about-copy p,.project-summary,.project-detail,.research-content p,.timeline p,.teaching-card p,.contact-intro{color:#273a31}
   .section{padding:18px 0;border-color:#a6b2aa;break-inside:avoid}.section-heading h2{font-size:24pt}.section-kicker,.mini-label,.project-meta{color:#345244}
