@@ -199,12 +199,12 @@ function App() {
               <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a><button className="button button-share" type="button" onClick={async () => { try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }) } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') return; setShareStatus('Sharing unavailable') } }}>Share ↗</button></div><span className="inline-status" role="status">{shareStatus}</span>
             </motion.div>
             <div className="hero-aside" aria-label="Portfolio focus areas">
-              <div className="hero-aside-top"><span>01 / 03</span><span>AREAS OF FOCUS</span></div>
+              <div className="hero-aside-top"><span>01 / {String(content.focus.length).padStart(2, '0')}</span><span>AREAS OF FOCUS</span></div>
               {content.focus.map((item, index) => <a className="focus-row" href={['#project-02', '#project-01', '#research'][index]} key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow diagonal /></a>)}
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
-          <div className="container hero-bottom"><span>SCROLL TO EXPLORE</span><span>PORTFOLIO / 2026</span></div>
+          <div className="container hero-bottom"><span>SCROLL TO EXPLORE</span><span>PORTFOLIO / {new Date().getFullYear()}</span></div>
         </section>
 
         <section className="section about-section" id="about" aria-labelledby="about-title">
