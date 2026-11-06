@@ -82,3 +82,4 @@
 @media(prefers-reduced-motion:reduce){.hero-scroll-link span{animation:none}}
 .hero-focus{min-height:35px}.hero-focus .hero-focus-value{font-size:12px;letter-spacing:normal;color:#c3e5d5}
 .hero-focus-control{display:flex;align-items:stretch;gap:7px;margin-bottom:18px}.hero-focus-control .hero-focus{margin:0}.focus-pause{width:35px;border:1px solid #8caf9c58;background:#15231f;color:#c3e5d5;cursor:pointer}.focus-pause:hover{background:#b6dfcf;color:#0b1118}
+.focus-selectors{display:flex;gap:5px;margin:-9px 0 18px}.focus-selectors button{width:26px;height:18px;position:relative;border:0;background:transparent;cursor:pointer}.focus-selectors button::before{content:"";position:absolute;left:4px;right:4px;top:8px;height:2px;background:#698c7d;transition:background .2s,transform .2s}.focus-selectors button:hover::before,.focus-selectors button.is-active::before{background:#c8ecd8;transform:scaleY(1.6)}
