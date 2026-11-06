@@ -17,12 +17,13 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SectionHeading({ id, number, eyebrow, title, description }: { id: string; number: string; eyebrow: string; title: string; description?: string }) {
+  const reducedMotion = useReducedMotion()
   return (
-    <div className="section-heading">
+    <motion.div className="section-heading" initial={reducedMotion ? false : { opacity: 0, y: 18 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.45 }} transition={{ duration: 0.45 }}>
       <div className="section-kicker"><span>{number}</span><span>{eyebrow}</span></div>
       <h2 id={id}>{title}</h2>
       {description && <p>{description}</p>}
-    </div>
+    </motion.div>
   )
 }
 
