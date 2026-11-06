@@ -53,3 +53,8 @@
 .hero-grid{animation:hero-grid-drift 28s linear infinite alternate;will-change:background-position}
 @keyframes hero-grid-drift{to{background-position:58px 29px,-29px 58px}}
 @media(prefers-reduced-motion:reduce){.hero-grid{animation:none;will-change:auto}}
+
+/* A quiet availability pulse draws attention to the banner status. */
+.status-dot{animation:status-breathe 3s ease-in-out infinite}
+@keyframes status-breathe{50%{box-shadow:0 0 0 8px #a3dec510,0 0 18px #a3dec580}}
+@media(prefers-reduced-motion:reduce){.status-dot{animation:none}}
