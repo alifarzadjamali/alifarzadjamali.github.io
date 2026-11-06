@@ -81,3 +81,4 @@
 @keyframes scroll-nudge{50%{transform:translateY(5px)}}
 @media(prefers-reduced-motion:reduce){.hero-scroll-link span{animation:none}}
 .hero-focus{min-height:35px}.hero-focus .hero-focus-value{font-size:12px;letter-spacing:normal;color:#c3e5d5}
+.hero-focus-control{display:flex;align-items:stretch;gap:7px;margin-bottom:18px}.hero-focus-control .hero-focus{margin:0}.focus-pause{width:35px;border:1px solid #8caf9c58;background:#15231f;color:#c3e5d5;cursor:pointer}.focus-pause:hover{background:#b6dfcf;color:#0b1118}

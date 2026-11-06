@@ -68,6 +68,7 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [localTime, setLocalTime] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
+  const [focusPaused, setFocusPaused] = useState(false)
   const [projectFilter, setProjectFilter] = useState('All')
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -101,12 +102,12 @@ function App() {
   }, [searchOpen, openSearch, closeSearch])
 
   useEffect(() => {
-    if (reducedMotion) return
+    if (reducedMotion || focusPaused) return
     const timer = window.setInterval(() => {
       if (!document.hidden) setFocusIndex(index => (index + 1) % content.focus.length)
     }, 3600)
     return () => window.clearInterval(timer)
-  }, [reducedMotion])
+  }, [reducedMotion, focusPaused])
 
   useEffect(() => {
     const updateTime = () => setLocalTime(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()))
@@ -194,7 +195,7 @@ function App() {
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
               <h1 id="hero-title">Building AI<br /><span>with clarity.</span></h1>
               <p className="hero-role">{content.role}</p>
-              <p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span><AnimatePresence mode="wait" initial={false}><motion.span className="hero-focus-value" key={focusIndex} initial={reducedMotion ? false : { opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -7 }} transition={{ duration: 0.2 }}>{content.focus[focusIndex]}</motion.span></AnimatePresence></p>
+              <div className="hero-focus-control"><p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span><AnimatePresence mode="wait" initial={false}><motion.span className="hero-focus-value" key={focusIndex} initial={reducedMotion ? false : { opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -7 }} transition={{ duration: 0.2 }}>{content.focus[focusIndex]}</motion.span></AnimatePresence></p>{!reducedMotion && <button className="focus-pause" type="button" aria-label={focusPaused ? 'Play focus rotation' : 'Pause focus rotation'} aria-pressed={focusPaused} onClick={() => setFocusPaused(paused => !paused)}>{focusPaused ? '▶' : 'Ⅱ'}</button>}</div>
               <p className="hero-intro">{content.intro}</p>
               <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a><button className="button button-share" type="button" onClick={async () => { try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }) } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') return; setShareStatus('Sharing unavailable') } }}>Share ↗</button></div><span className="inline-status" role="status">{shareStatus}</span>
             </motion.div>
