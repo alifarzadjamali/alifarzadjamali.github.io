@@ -73,3 +73,10 @@
 .hero h1 span{background:linear-gradient(100deg,#afd9ca 30%,#f3fff8 50%,#afd9ca 70%);background-size:220% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:headline-sweep 1.6s .25s both}
 @keyframes headline-sweep{from{background-position:100% 0}to{background-position:0 0}}
 @media(prefers-reduced-motion:reduce){.hero h1 span{animation:none;background:none;color:#afd9ca}}
+
+/* The scroll prompt stays an actual link and gently points down. */
+.hero-scroll-link{display:inline-flex;align-items:center;gap:9px;color:#a9bdb2}
+.hero-scroll-link span{display:inline-block;font-size:17px;line-height:0;animation:scroll-nudge 2.4s ease-in-out infinite}
+.hero-scroll-link:hover{color:#e5fff0}
+@keyframes scroll-nudge{50%{transform:translateY(5px)}}
+@media(prefers-reduced-motion:reduce){.hero-scroll-link span{animation:none}}
