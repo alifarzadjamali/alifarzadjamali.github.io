@@ -204,7 +204,7 @@ function App() {
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
-          <div className="container hero-bottom"><span>SCROLL TO EXPLORE</span><span>PORTFOLIO / {new Date().getFullYear()}</span></div>
+          <div className="container hero-bottom"><a className="hero-scroll-link" href="#about">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {new Date().getFullYear()}</span></div>
         </section>
 
         <section className="section about-section" id="about" aria-labelledby="about-title">
