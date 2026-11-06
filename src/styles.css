@@ -58,3 +58,13 @@
 .status-dot{animation:status-breathe 3s ease-in-out infinite}
 @keyframes status-breathe{50%{box-shadow:0 0 0 8px #a3dec510,0 0 18px #a3dec580}}
 @media(prefers-reduced-motion:reduce){.status-dot{animation:none}}
+
+/* Banner panel enters after the headline, with a short row cascade. */
+.hero-aside{animation:aside-arrive .7s .12s both}
+.hero-aside .focus-row{animation:focus-row-arrive .55s both}
+.hero-aside .focus-row:nth-of-type(1){animation-delay:.25s}
+.hero-aside .focus-row:nth-of-type(2){animation-delay:.33s}
+.hero-aside .focus-row:nth-of-type(3){animation-delay:.41s}
+@keyframes aside-arrive{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes focus-row-arrive{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.hero-aside,.hero-aside .focus-row{animation:none}}
