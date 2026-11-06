@@ -80,3 +80,4 @@
 .hero-scroll-link:hover{color:#e5fff0}
 @keyframes scroll-nudge{50%{transform:translateY(5px)}}
 @media(prefers-reduced-motion:reduce){.hero-scroll-link span{animation:none}}
+.hero-focus{min-height:35px}.hero-focus .hero-focus-value{font-size:12px;letter-spacing:normal;color:#c3e5d5}

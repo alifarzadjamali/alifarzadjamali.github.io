@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 
 const navigation = [
@@ -194,7 +194,7 @@ function App() {
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
               <h1 id="hero-title">Building AI<br /><span>with clarity.</span></h1>
               <p className="hero-role">{content.role}</p>
-              <p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span>{content.focus[focusIndex]}</p>
+              <p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span><AnimatePresence mode="wait" initial={false}><motion.span className="hero-focus-value" key={focusIndex} initial={reducedMotion ? false : { opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -7 }} transition={{ duration: 0.2 }}>{content.focus[focusIndex]}</motion.span></AnimatePresence></p>
               <p className="hero-intro">{content.intro}</p>
               <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a><button className="button button-share" type="button" onClick={async () => { try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }) } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') return; setShareStatus('Sharing unavailable') } }}>Share ↗</button></div><span className="inline-status" role="status">{shareStatus}</span>
             </motion.div>
