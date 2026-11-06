@@ -48,3 +48,8 @@
   .research-content{border:0;padding:0}.skills-grid{margin-top:15px}.skill-group{padding:12px}.contact-links{padding-top:12px;justify-self:start}.contact-email{color:#17251f}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;overflow-wrap:anywhere}
 }
+
+/* Slow banner grid drift adds depth without moving the text. */
+.hero-grid{animation:hero-grid-drift 28s linear infinite alternate;will-change:background-position}
+@keyframes hero-grid-drift{to{background-position:58px 29px,-29px 58px}}
+@media(prefers-reduced-motion:reduce){.hero-grid{animation:none;will-change:auto}}
