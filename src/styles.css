@@ -92,3 +92,7 @@
 /* The current section gains a growing indicator in desktop navigation. */
 @media(min-width:801px){.nav a:not(.nav-cv){position:relative;text-decoration:none}.nav a:not(.nav-cv)::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:2px;background:#a3dec5;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}.nav a:not(.nav-cv):hover::after,.nav a:not(.nav-cv):focus-visible::after,.nav a[aria-current="location"]::after{transform:scaleX(1)}}
 @media(prefers-reduced-motion:reduce){.nav a:not(.nav-cv)::after{transition:none}}
+/* Mobile navigation opens with a short slide; the menu icon reflects its state. */
+@media(max-width:800px){.nav-open{animation:mobile-nav-arrive .24s ease-out both}.menu-toggle span{transition:transform .22s ease}.menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(3.5px) rotate(45deg)}.menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}}
+@keyframes mobile-nav-arrive{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.nav-open{animation:none}.menu-toggle span{transition:none}}
