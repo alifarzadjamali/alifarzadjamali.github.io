@@ -89,3 +89,6 @@
 .project-card:hover .floor-grid,.project-card:focus-within .floor-grid{transform:translate(-50%,-50%) rotate(-4deg) scale(1.05);filter:brightness(1.1)}
 @media(max-width:540px){.project-card:hover .floor-grid,.project-card:focus-within .floor-grid{transform:translate(-50%,-50%) scale(.84) rotate(-4deg)}}
 @media(prefers-reduced-motion:reduce){.project-visual .fashion-flow,.project-visual .floor-grid{transition:none}}
+/* The current section gains a growing indicator in desktop navigation. */
+@media(min-width:801px){.nav a:not(.nav-cv){position:relative;text-decoration:none}.nav a:not(.nav-cv)::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:2px;background:#a3dec5;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}.nav a:not(.nav-cv):hover::after,.nav a:not(.nav-cv):focus-visible::after,.nav a[aria-current="location"]::after{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.nav a:not(.nav-cv)::after{transition:none}}
