@@ -120,6 +120,14 @@ function App() {
   }, [searchOpen])
 
   useEffect(() => {
+    if (!searchOpen) return
+    const background = Array.from(document.querySelectorAll<HTMLElement>('.site-header, main, .section-rail, .back-to-top, .site-footer'))
+    const previous = background.map(element => element.inert)
+    background.forEach(element => { element.inert = true })
+    return () => background.forEach((element, index) => { element.inert = previous[index] ?? false })
+  }, [searchOpen])
+
+  useEffect(() => {
     if (reducedMotion || focusPaused) return
     const timer = window.setInterval(() => {
       if (!document.hidden) setFocusIndex(index => (index + 1) % content.focus.length)
@@ -135,14 +143,19 @@ function App() {
   }, [])
 
   useEffect(() => {
+    let frame = 0
     const updateProgress = () => {
+      frame = 0
       const scrollable = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0)
     }
+    const scheduleProgress = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateProgress)
+    }
     updateProgress()
-    window.addEventListener('scroll', updateProgress, { passive: true })
-    window.addEventListener('resize', updateProgress)
-    return () => { window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress) }
+    window.addEventListener('scroll', scheduleProgress, { passive: true })
+    window.addEventListener('resize', scheduleProgress)
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener('scroll', scheduleProgress); window.removeEventListener('resize', scheduleProgress) }
   }, [])
 
   useEffect(() => {
@@ -153,6 +166,7 @@ function App() {
       window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView())
     }
     window.addEventListener('hashchange', revealLinkedProject)
+    revealLinkedProject()
     return () => window.removeEventListener('hashchange', revealLinkedProject)
   }, [])
 
