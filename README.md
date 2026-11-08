@@ -1,5 +1,9 @@
 # Farzad Jamali portfolio
 
+## Licence
+
+The site code and project documentation are available under the [MIT License](LICENSE). The personal CV in `public/Ali_Jamali_CV.pdf` is provided as a public download, but it is not licensed for reuse as part of the site code.
+
 A static, single-page portfolio built with React, TypeScript, Vite, Tailwind CSS, and Motion. It has no backend, account system, paid API, cookies, or analytics. Hosting is intended for the free GitHub Pages user site at `https://alifarzadjamali.github.io/`.
 
 ## Local setup
