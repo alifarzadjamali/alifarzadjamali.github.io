@@ -12,12 +12,13 @@ export type Project = {
 
 export type PortfolioContent = {
   name: string
+  emailAddress: string
   shortName: string
   role: string
   location: string
   intro: string
   about: string[]
-  focus: string[]
+  focus: { label: string; href: string }[]
   projects: Project[]
   research: { heading: string; description: string; note: string }
   experience: { title: string; organization: string; description: string }[]
@@ -27,8 +28,11 @@ export type PortfolioContent = {
   cv: { href: string; label: string; note: string }
 }
 
+const emailAddress = 'ali292jamali@gmail.com'
+
 export const content: PortfolioContent = {
   name: 'Ali (Farzad) Jamali',
+  emailAddress,
   shortName: 'Farzad Jamali',
   role: 'AI & Computer Vision Engineer',
   location: 'Manchester, UK',
@@ -37,7 +41,11 @@ export const content: PortfolioContent = {
     'I work across computer vision, recommendation, document intelligence, and grounded AI. My projects move from data and models through evaluation and usable review tools.',
     'I am completing an MPhil in Computer Science & Artificial Intelligence at the University of Salford. My earlier background in mechanical engineering informs how I approach real-world systems.',
   ],
-  focus: ['Computer vision', 'Multimodal retrieval', 'Evidence-grounded AI'],
+  focus: [
+    { label: 'Computer vision', href: '#project-02' },
+    { label: 'Multimodal retrieval', href: '#project-01' },
+    { label: 'Evidence-grounded AI', href: '#research' },
+  ],
   projects: [
     {
       number: '01',
@@ -95,7 +103,7 @@ export const content: PortfolioContent = {
   links: {
     github: 'https://github.com/alifarzadjamali',
     linkedin: 'https://www.linkedin.com/in/alifarzadjamali/',
-    email: 'mailto:ali292jamali@gmail.com',
+    email: `mailto:${emailAddress}`,
   },
   cv: {
     href: '/Ali_Jamali_CV.pdf',
