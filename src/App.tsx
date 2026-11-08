@@ -12,6 +12,15 @@ const navigation = [
   ['Contact', '#contact'],
 ] as const
 
+const quickNavItems = [
+  ...navigation.map(([label, href]) => ({ label, href, searchText: label.toLowerCase() })),
+  ...content.projects.map(project => ({
+    label: project.title,
+    href: `#project-${project.number}`,
+    searchText: [project.title, project.category, ...project.tags].join(' ').toLowerCase(),
+  })),
+]
+
 function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return <span aria-hidden="true">{diagonal ? '↗' : '→'}</span>
 }
@@ -81,6 +90,7 @@ function App() {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const searchReturnFocusRef = useRef<HTMLElement | null>(null)
   const reducedMotion = useReducedMotion()
+  const matchingQuickNavItems = quickNavItems.filter(item => item.searchText.includes(searchQuery.trim().toLowerCase()))
 
   const openSearch = useCallback(() => {
     searchReturnFocusRef.current = menuOpen ? menuButtonRef.current : document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -101,6 +111,13 @@ function App() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [searchOpen, openSearch, closeSearch])
+
+  useEffect(() => {
+    if (!searchOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previousOverflow }
+  }, [searchOpen])
 
   useEffect(() => {
     if (reducedMotion || focusPaused) return
@@ -215,7 +232,7 @@ function App() {
         </section>
 
         <section className="section projects-section" id="projects" aria-labelledby="projects-title">
-          <div className="container"><SectionHeading id="projects-title" number="02" eyebrow="FEATURED PROJECTS" title="Selected work." description="A closer look at systems, methods, and the boundaries of what each project can claim." /><div className="project-filters" role="group" aria-label="Filter projects">{['All', ...content.projects.map(project => project.category)].map(filter => <button key={filter} type="button" aria-pressed={projectFilter === filter} onClick={() => setProjectFilter(filter)}>{filter}</button>)}</div><div className="project-list">{content.projects.map((project, index) => <div key={project.number} hidden={projectFilter !== 'All' && project.category !== projectFilter}><ProjectCard project={project} index={index} /></div>)}</div></div>
+          <div className="container"><SectionHeading id="projects-title" number="02" eyebrow="FEATURED PROJECTS" title="Selected work." description="A closer look at systems, methods, and the boundaries of what each project can claim." /><div className="project-filters" role="group" aria-label="Filter projects">{['All', ...new Set(content.projects.map(project => project.category))].map(filter => <button key={filter} type="button" aria-pressed={projectFilter === filter} onClick={() => setProjectFilter(filter)} onKeyDown={event => { const buttons = Array.from(event.currentTarget.parentElement?.querySelectorAll('button') ?? []); const current = buttons.indexOf(event.currentTarget); let next: number; if (event.key === 'Home') next = 0; else if (event.key === 'End') next = buttons.length - 1; else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = (current + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length; else return; event.preventDefault(); buttons[next]?.focus(); buttons[next]?.click() }}>{filter}</button>)}</div><div className="project-list">{content.projects.map((project, index) => <div key={project.number} hidden={projectFilter !== 'All' && project.category !== projectFilter}><ProjectCard project={project} index={index} /></div>)}</div></div>
         </section>
 
         <section className="section research-section" id="research" aria-labelledby="research-title">
@@ -239,7 +256,7 @@ function App() {
         <section className="section contact-section" id="contact" aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="07" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>{content.emailAddress} <Arrow diagonal /></a><div className="contact-topic"><label htmlFor="contact-topic">Start with a topic</label><select id="contact-topic" value={contactTopic} onChange={event => setContactTopic(event.target.value)}><option>AI collaboration</option><option>Computer vision project</option><option>Research conversation</option><option>Something else</option></select><a href={`${content.links.email}?subject=${encodeURIComponent(contactTopic)}`}>Compose email <Arrow diagonal /></a></div><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(content.emailAddress); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a><a href={content.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href="/farzad-jamali.vcf" download>Save contact <Arrow diagonal /></a><span className="location">{content.location}</span></div></div></section>
       </main>
       <nav className={`section-rail ${scrollProgress > 5 ? 'is-visible' : ''}`} aria-label="Page sections">{navigation.map(([label, href]) => <a key={href} href={href} aria-label={label} aria-current={activeSection === href ? 'location' : undefined} title={label}><span /></a>)}</nav>
-       {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><div className="quick-nav-results">{[...navigation.map(([label, href]) => ({ label, href })), ...content.projects.map(project => ({ label: project.title, href: `#project-${project.number}` }))].filter(item => item.label.toLowerCase().includes(searchQuery.toLowerCase())).map(item => <a key={item.href} href={item.href} onClick={() => { if (item.href.startsWith('#project-')) setProjectFilter('All'); setSearchOpen(false); setSearchQuery('') }}>{item.label}<Arrow /></a>)}{![...navigation.map(([label]) => label), ...content.projects.map(project => project.title)].some(label => label.toLowerCase().includes(searchQuery.toLowerCase())) && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
+       {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><div className="quick-nav-results">{matchingQuickNavItems.map(item => <a key={item.href} href={item.href} onClick={() => { if (item.href.startsWith('#project-')) setProjectFilter('All'); setSearchOpen(false); setSearchQuery('') }}>{item.label}<Arrow /></a>)}{matchingQuickNavItems.length === 0 && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
       <a className={`back-to-top ${scrollProgress > 18 ? 'is-visible' : ''}`} href="#top" aria-label="Back to top" tabIndex={scrollProgress > 18 ? 0 : -1}>↑</a>
       <footer className="site-footer"><div className="container footer-inner"><span>© {new Date().getFullYear()} {content.name}</span><span>Built with care and clear evidence.</span><a href="#top">Back to top ↑</a></div></footer>
     </div>
