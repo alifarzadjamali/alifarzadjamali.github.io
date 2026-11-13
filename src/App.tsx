@@ -100,6 +100,7 @@ function App() {
 
   const closeSearch = useCallback(() => {
     setSearchOpen(false)
+    setSearchQuery('')
     window.requestAnimationFrame(() => searchReturnFocusRef.current?.focus())
   }, [])
 
