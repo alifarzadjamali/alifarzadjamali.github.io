@@ -147,7 +147,7 @@ function App() {
     const updateProgress = () => {
       frame = 0
       const scrollable = document.documentElement.scrollHeight - window.innerHeight
-      setScrollProgress(scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0)
+      setScrollProgress(scrollable > 0 ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 0)
     }
     const scheduleProgress = () => {
       if (!frame) frame = window.requestAnimationFrame(updateProgress)
