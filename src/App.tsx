@@ -106,7 +106,9 @@ function App() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); if (searchOpen) closeSearch(); else openSearch() }
+      const target = event.target
+      const editing = target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+      if (!editing && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); if (searchOpen) closeSearch(); else openSearch() }
       if (event.key === 'Escape' && searchOpen) closeSearch()
     }
     window.addEventListener('keydown', onKey)
