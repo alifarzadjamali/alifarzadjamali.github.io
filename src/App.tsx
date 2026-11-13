@@ -13,7 +13,16 @@ const navigation = [
 ] as const
 
 const quickNavItems = [
-  ...navigation.map(([label, href]) => ({ label, href, searchText: label.toLowerCase() })),
+  ...navigation.map(([label, href]) => ({
+    label,
+    href,
+    searchText: [
+      label,
+      ...(href === '#skills' ? content.skills.flatMap(group => [group.label, ...group.items]) : []),
+      ...(href === '#research' ? [content.research.heading, content.research.description] : []),
+      ...(href === '#contact' ? ['email', content.emailAddress] : []),
+    ].join(' ').toLowerCase(),
+  })),
   { label: 'View CV', href: content.cv.href, searchText: 'cv resume curriculum vitae' },
   ...content.projects.map(project => ({
     label: project.title,
