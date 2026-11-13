@@ -90,7 +90,8 @@ function App() {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const searchReturnFocusRef = useRef<HTMLElement | null>(null)
   const reducedMotion = useReducedMotion()
-  const matchingQuickNavItems = quickNavItems.filter(item => item.searchText.includes(searchQuery.trim().toLowerCase()))
+  const searchTerms = searchQuery.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  const matchingQuickNavItems = quickNavItems.filter(item => searchTerms.every(term => item.searchText.includes(term)))
   const visibleProjectCount = content.projects.filter(project => projectFilter === 'All' || project.category === projectFilter).length
 
   const openSearch = useCallback(() => {
