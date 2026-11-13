@@ -14,6 +14,7 @@ const navigation = [
 
 const quickNavItems = [
   ...navigation.map(([label, href]) => ({ label, href, searchText: label.toLowerCase() })),
+  { label: 'View CV', href: content.cv.href, searchText: 'cv resume curriculum vitae' },
   ...content.projects.map(project => ({
     label: project.title,
     href: `#project-${project.number}`,
