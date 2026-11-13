@@ -177,6 +177,9 @@ function App() {
 
   useEffect(() => {
     if (!menuOpen) return
+    const desktop = window.matchMedia('(min-width: 801px)')
+    const closeOnDesktop = () => { if (desktop.matches) setMenuOpen(false) }
+    desktop.addEventListener('change', closeOnDesktop)
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMenuOpen(false)
@@ -190,6 +193,7 @@ function App() {
     document.addEventListener('keydown', closeOnEscape)
     document.addEventListener('pointerdown', closeOnOutsideClick)
     return () => {
+      desktop.removeEventListener('change', closeOnDesktop)
       document.removeEventListener('keydown', closeOnEscape)
       document.removeEventListener('pointerdown', closeOnOutsideClick)
     }
