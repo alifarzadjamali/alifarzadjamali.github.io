@@ -155,7 +155,9 @@ function App() {
     updateProgress()
     window.addEventListener('scroll', scheduleProgress, { passive: true })
     window.addEventListener('resize', scheduleProgress)
-    return () => { window.cancelAnimationFrame(frame); window.removeEventListener('scroll', scheduleProgress); window.removeEventListener('resize', scheduleProgress) }
+    const resizeObserver = new ResizeObserver(scheduleProgress)
+    resizeObserver.observe(document.documentElement)
+    return () => { window.cancelAnimationFrame(frame); resizeObserver.disconnect(); window.removeEventListener('scroll', scheduleProgress); window.removeEventListener('resize', scheduleProgress) }
   }, [])
 
   useEffect(() => {
