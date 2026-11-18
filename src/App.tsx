@@ -49,17 +49,7 @@ function SectionHeading({ id, number, eyebrow, title, description }: { id: strin
 }
 
 function ProjectVisual({ type }: { type: Project['visual'] }) {
-  if (type === 'language') return <div className="project-visual visual-language" aria-hidden="true"><div className="visual-label">TEXT / DIVERSITY</div><div className="fashion-flow">{['responses', 'embeddings', 'compare'].map((label, index) => <span className="fashion-node" key={label}>0{index + 1}<span>{label}</span></span>)}</div><div className="visual-footer">LLM / EVALUATION</div></div>
-  if (type === 'fabric' || type === 'benchmark') return (
-    <div className={`project-visual visual-${type}`} aria-hidden="true"><div className="visual-label">{type === 'fabric' ? 'FABRIC / INSPECTION' : 'OUTFIT / REPRESENTATION'}</div><div className="fashion-flow">{(type === 'fabric' ? ['image', 'mask', 'review'] : ['features', 'model', 'compare']).map((label, index) => <span className="fashion-node" key={label}>0{index + 1}<span>{label}</span></span>)}</div><div className="visual-footer">{type === 'fabric' ? 'VISION / SEGMENTATION' : 'FASHION / BENCHMARK'}</div></div>
-  )
-  if (type === 'fashion') return (
-    <div className="project-visual visual-fashion" aria-hidden="true">
-      <div className="visual-label">IMAGE + TEXT</div>
-      <div className="fashion-flow"><span className="fashion-node node-a">01<span>visual</span></span><span className="fashion-path" /><span className="fashion-node node-b">02<span>rules</span></span><span className="fashion-path" /><span className="fashion-node node-c">03<span>evidence</span></span></div>
-      <div className="visual-footer">MULTIMODAL / GROUNDED</div>
-    </div>
-  )
+  if (type !== 'floorplan') return <div className="project-visual project-artwork" aria-hidden="true"><img src={`/projects/artwork/${type}.webp`} alt="" width="1000" height="1000" loading="lazy" /></div>
   return (
     <div className="project-visual visual-floor" aria-hidden="true">
       <div className="visual-label">DOCUMENT → STRUCTURE</div>
@@ -239,7 +229,6 @@ function App() {
         <div className="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(scrollProgress)} style={{ width: `${scrollProgress}%` }} />
         <div className="container header-inner">
           <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F</span><span>FARZAD JAMALI</span></a>
-          <button className="quick-nav-trigger" type="button" onClick={openSearch}>Jump to… <kbd>Ctrl / ⌘ K</kbd></button>
           <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
           <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
             <button className="mobile-search" type="button" onClick={openSearch}>Search sections and projects <Arrow /></button>
