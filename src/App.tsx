@@ -49,14 +49,7 @@ function SectionHeading({ id, number, eyebrow, title, description }: { id: strin
 }
 
 function ProjectVisual({ type }: { type: Project['visual'] }) {
-  if (type !== 'floorplan') return <div className="project-visual project-artwork" aria-hidden="true"><img src={`/projects/artwork/${type}.webp`} alt="" width="1000" height="1000" loading="lazy" /></div>
-  return (
-    <div className="project-visual visual-floor" aria-hidden="true">
-      <div className="visual-label">DOCUMENT → STRUCTURE</div>
-      <div className="floor-grid"><span className="room room-a" /><span className="room room-b" /><span className="room room-c" /><span className="room room-d" /><span className="floor-cross">+</span></div>
-      <div className="visual-footer">SEGMENTATION / OCR / JSON</div>
-    </div>
-  )
+  return <div className="project-visual project-artwork" aria-hidden="true"><img src={`/projects/artwork/${type}.webp`} alt="" width="1000" height="1000" loading="lazy" /></div>
 }
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
