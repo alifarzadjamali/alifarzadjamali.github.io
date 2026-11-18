@@ -47,6 +47,9 @@ function SectionHeading({ id, number, eyebrow, title, description }: { id: strin
 }
 
 function ProjectVisual({ type }: { type: Project['visual'] }) {
+  if (type === 'fabric' || type === 'benchmark') return (
+    <div className={`project-visual visual-${type}`} aria-hidden="true"><div className="visual-label">{type === 'fabric' ? 'FABRIC / INSPECTION' : 'OUTFIT / REPRESENTATION'}</div><div className="fashion-flow">{(type === 'fabric' ? ['image', 'mask', 'review'] : ['features', 'model', 'compare']).map((label, index) => <span className="fashion-node" key={label}>0{index + 1}<span>{label}</span></span>)}</div><div className="visual-footer">{type === 'fabric' ? 'VISION / SEGMENTATION' : 'FASHION / BENCHMARK'}</div></div>
+  )
   if (type === 'fashion') return (
     <div className="project-visual visual-fashion" aria-hidden="true">
       <div className="visual-label">IMAGE + TEXT</div>
@@ -72,7 +75,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       <ProjectVisual type={project.visual} />
       <div className="project-body">
         <div className="project-meta"><span>{project.number} / {project.category}</span><span>SELECTED WORK</span></div>
-        <h3 id={`project-title-${project.number}`}><a className="project-permalink" href={`#project-${project.number}`} aria-label={`Link to ${project.title}`}>{project.title}<span aria-hidden="true"> #</span></a></h3>
+        <h3 id={`project-title-${project.number}`}><a className="project-permalink" href={`/projects/${project.repository.split('/').pop()}/`} aria-label={`Read about ${project.title}`}>{project.title}</a></h3>
         <p className="project-summary">{project.summary}</p>
         <p className="project-detail">{project.detail}</p>
         <div className="project-stages" aria-label={`${project.title} workflow`}><div className="stage-buttons">{project.stages.map((stage, stageNumber) => <button key={stage.label} type="button" aria-pressed={stageIndex === stageNumber} aria-controls={`stage-description-${project.number}`} onClick={() => setStageIndex(stageNumber)} onKeyDown={event => { let next: number; if (event.key === 'Home') next = 0; else if (event.key === 'End') next = project.stages.length - 1; else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = (stageNumber + (event.key === 'ArrowRight' ? 1 : -1) + project.stages.length) % project.stages.length; else return; event.preventDefault(); setStageIndex(next); event.currentTarget.parentElement?.querySelectorAll('button')[next]?.focus() }}>{stageNumber + 1}. {stage.label}</button>)}</div><div className="stage-progress" aria-hidden="true"><span style={{ width: `${((stageIndex + 1) / project.stages.length) * 100}%` }} /></div><p id={`stage-description-${project.number}`} role="status">{project.stages[stageIndex]?.description}</p></div>
@@ -87,6 +90,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [localTime, setLocalTime] = useState('')
+  const [year, setYear] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
   const [focusPaused, setFocusPaused] = useState(false)
   const [projectFilter, setProjectFilter] = useState('All')
@@ -152,6 +156,7 @@ function App() {
 
   useEffect(() => {
     const updateTime = () => setLocalTime(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()))
+    setYear(String(new Date().getFullYear()))
     updateTime()
     const timer = window.setInterval(updateTime, 30_000)
     return () => window.clearInterval(timer)
@@ -246,7 +251,7 @@ function App() {
           <div className="container hero-content">
             <motion.div className="hero-copy max-w-[680px]" initial={reducedMotion ? false : { opacity: 0, y: 18 }} animate={reducedMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
-              <h1 id="hero-title">Building AI<br /><span>with clarity.</span></h1>
+              <h1 id="hero-title" className="visually-hidden">{content.name}</h1><div className="hero-headline">Building AI<br /><span>with clarity.</span></div>
               <p className="hero-role">{content.role}</p>
               <div className="hero-focus-control" onFocusCapture={() => setFocusPaused(true)}><p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span><AnimatePresence mode="wait" initial={false}><motion.span className="hero-focus-value" key={focusIndex} initial={reducedMotion ? false : { opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -7 }} transition={{ duration: 0.2 }}>{content.focus[focusIndex]?.label}</motion.span></AnimatePresence></p>{!reducedMotion && <button className="focus-pause" type="button" aria-label={focusPaused ? 'Play focus rotation' : 'Pause focus rotation'} aria-pressed={focusPaused} onClick={() => setFocusPaused(paused => !paused)}>{focusPaused ? '▶' : 'Ⅱ'}</button>}</div>
               <div className="focus-selectors" role="group" aria-label="Choose a focus area">{content.focus.map((focus, index) => <button key={focus.label} type="button" className={focusIndex === index ? 'is-active' : ''} aria-label={`Show ${focus.label}`} aria-pressed={focusIndex === index} onClick={() => { setFocusIndex(index); setFocusPaused(true) }} />)}</div>
@@ -259,7 +264,7 @@ function App() {
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
-          <div className="container hero-bottom"><a className="hero-scroll-link" href="#about">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {new Date().getFullYear()}</span></div>
+          <div className="container hero-bottom"><a className="hero-scroll-link" href="#about">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {year}</span></div>
         </section>
 
         <section className="section about-section" id="about" aria-labelledby="about-title">
@@ -271,7 +276,7 @@ function App() {
         </section>
 
         <section className="section research-section" id="research" aria-labelledby="research-title">
-          <div className="container research-grid"><SectionHeading id="research-title" number="03" eyebrow="RESEARCH" title="Questions worth testing." /><div className="research-content"><span className="mini-label">CURRENT FOCUS</span><h3>{content.research.heading}</h3><p>{content.research.description}</p><div className="note-line">{content.research.note}</div></div></div>
+          <div className="container research-grid"><SectionHeading id="research-title" number="03" eyebrow="RESEARCH" title="Questions worth testing." /><div className="research-content"><span className="mini-label">CURRENT FOCUS</span><h3>{content.research.heading}</h3><p>{content.research.description}</p><div className="note-line"><a href={content.links.googleScholar} target="_blank" rel="me noopener noreferrer">{content.research.note}</a></div></div></div>
         </section>
 
         <section className="section experience-section" id="experience" aria-labelledby="experience-title">
@@ -288,12 +293,12 @@ function App() {
 
         <section className="section cv-section" id="cv" aria-labelledby="cv-title"><div className="container cv-panel"><div><span className="mini-label">CURRICULUM VITAE</span><h2 id="cv-title">A concise record of the work.</h2><p>{content.cv.note}</p></div><a className="button button-primary" href={content.cv.href} download>{content.cv.label} <Arrow diagonal /></a></div></section>
 
-        <section className="section contact-section" id="contact" aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="07" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>{content.emailAddress} <Arrow diagonal /></a><div className="contact-topic"><label htmlFor="contact-topic">Start with a topic</label><select id="contact-topic" value={contactTopic} onChange={event => setContactTopic(event.target.value)}><option>AI collaboration</option><option>Computer vision project</option><option>Research conversation</option><option>Something else</option></select><a href={`${content.links.email}?subject=${encodeURIComponent(contactTopic)}`}>Compose email <Arrow diagonal /></a></div><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(content.emailAddress); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a><a href={content.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href="/farzad-jamali.vcf" download>Save contact <Arrow diagonal /></a><span className="location">{content.location}</span></div></div></section>
+        <section className="section contact-section" id="contact" aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="07" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>{content.emailAddress} <Arrow diagonal /></a><div className="contact-topic"><label htmlFor="contact-topic">Start with a topic</label><select id="contact-topic" value={contactTopic} onChange={event => setContactTopic(event.target.value)}><option>AI collaboration</option><option>Computer vision project</option><option>Research conversation</option><option>Something else</option></select><a href={`${content.links.email}?subject=${encodeURIComponent(contactTopic)}`}>Compose email <Arrow diagonal /></a></div><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(content.emailAddress); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="me noopener noreferrer">GitHub <Arrow diagonal /></a><a href={content.links.linkedin} target="_blank" rel="me noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href={content.links.googleScholar} target="_blank" rel="me noopener noreferrer">Google Scholar <Arrow diagonal /></a><a href={content.links.orcid} target="_blank" rel="me noopener noreferrer">ORCID <Arrow diagonal /></a><a href="/farzad-jamali.vcf" download>Save contact <Arrow diagonal /></a><span className="location">{content.location}</span></div></div></section>
       </main>
       <nav className={`section-rail ${scrollProgress > 5 ? 'is-visible' : ''}`} aria-label="Page sections" inert={scrollProgress <= 5}>{navigation.map(([label, href]) => <a key={href} href={href} aria-label={label} aria-current={activeSection === href ? 'location' : undefined} title={label}><span /></a>)}</nav>
        {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>('.quick-nav-results a')); if (!links.length) return; event.preventDefault(); const index = links.indexOf(document.activeElement as HTMLAnchorElement); links[index < 0 ? (event.key === 'ArrowDown' ? 0 : links.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length]?.focus(); return } if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.closest('.quick-nav')?.querySelector<HTMLAnchorElement>('.quick-nav-results a')?.click() } }} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><p className="quick-nav-count" role="status">{matchingQuickNavItems.length} {matchingQuickNavItems.length === 1 ? 'result' : 'results'}</p><div className="quick-nav-results">{matchingQuickNavItems.map(item => <a key={item.href} href={item.href} onClick={() => { if (item.href.startsWith('#project-')) setProjectFilter('All'); setSearchOpen(false); setSearchQuery('') }}>{item.label}<Arrow /></a>)}{matchingQuickNavItems.length === 0 && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
        <a className={`back-to-top ${scrollProgress > 18 ? 'is-visible' : ''}`} href="#top" aria-label="Back to top" aria-hidden={scrollProgress <= 18} tabIndex={scrollProgress > 18 ? 0 : -1}>↑</a>
-      <footer className="site-footer"><div className="container footer-inner"><span>© {new Date().getFullYear()} {content.name}</span><span>Built with care and clear evidence.</span><a href="#top">Back to top ↑</a></div></footer>
+      <footer className="site-footer"><div className="container footer-inner"><span>© {year} {content.name}</span><span className="footer-profiles">{([['GitHub', content.links.github], ['LinkedIn', content.links.linkedin], ['Google Scholar', content.links.googleScholar], ['ORCID', content.links.orcid]] as const).map(([label, href]) => <a key={label} href={href} target="_blank" rel="me noopener noreferrer">{label}</a>)}</span><a href="#top">Back to top ↑</a></div></footer>
     </div>
   )
 }
