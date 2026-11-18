@@ -105,3 +105,9 @@
 .project-page{max-width:900px}.project-page h1{font-size:clamp(40px,6vw,72px);line-height:1.05;letter-spacing:-.05em;margin:24px 0}.project-page h2{font-size:24px;margin-top:36px}.project-page p,.project-page li{line-height:1.8}.project-page ol{padding-left:24px}.project-page a{color:#b6d5c3}.project-page .tag-list{margin:30px 0}
 
 @media(max-width:540px){.footer-inner .footer-profiles{display:flex}}
+
+.hero-name{font-size:clamp(19px,2.1vw,28px);line-height:1.25;font-weight:600;letter-spacing:-.025em;margin:25px 0 0;color:#dce9e4}
+.hero .hero-headline{margin-top:13px}
+.hero-aside,.hero-aside .focus-row{animation:none}
+.education-section{background:#0d161c}.publications{list-style:disc;padding-left:20px;margin:0 0 30px;color:#a4b8ae;line-height:1.8}.publications li{margin-bottom:15px}.publications a{text-decoration:underline;color:#b6d5c3}
+.project-details-link{margin-right:22px}.project-page{max-width:none}.project-page>h1,.project-page>p,.project-page>h2,.project-page>ol,.project-page>figure,.project-page>ul,.project-page>.more-projects{max-width:900px}.project-page .project-workflow{list-style:decimal;padding-left:24px}.project-figure{margin:30px 0}.project-figure img{display:block;max-width:100%;height:auto}.project-figure figcaption{font-size:12px;color:#a4b8ae;margin-top:10px}.more-projects ul{list-style:disc;padding-left:20px;line-height:2}

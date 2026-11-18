@@ -1,6 +1,7 @@
 BEGIN:VCARD
 VERSION:3.0
-N:Jamali;Ali (Farzad);;;
+N:Jamali;Ali;Farzad;;
+NICKNAME:Farzad
 FN:Ali (Farzad) Jamali
 TITLE:AI & Computer Vision Engineer
 EMAIL;TYPE=INTERNET:ali292jamali@gmail.com
