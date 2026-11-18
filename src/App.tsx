@@ -49,6 +49,7 @@ function SectionHeading({ id, number, eyebrow, title, description }: { id: strin
 }
 
 function ProjectVisual({ type }: { type: Project['visual'] }) {
+  if (type === 'language') return <div className="project-visual visual-language" aria-hidden="true"><div className="visual-label">TEXT / DIVERSITY</div><div className="fashion-flow">{['responses', 'embeddings', 'compare'].map((label, index) => <span className="fashion-node" key={label}>0{index + 1}<span>{label}</span></span>)}</div><div className="visual-footer">LLM / EVALUATION</div></div>
   if (type === 'fabric' || type === 'benchmark') return (
     <div className={`project-visual visual-${type}`} aria-hidden="true"><div className="visual-label">{type === 'fabric' ? 'FABRIC / INSPECTION' : 'OUTFIT / REPRESENTATION'}</div><div className="fashion-flow">{(type === 'fabric' ? ['image', 'mask', 'review'] : ['features', 'model', 'compare']).map((label, index) => <span className="fashion-node" key={label}>0{index + 1}<span>{label}</span></span>)}</div><div className="visual-footer">{type === 'fabric' ? 'VISION / SEGMENTATION' : 'FASHION / BENCHMARK'}</div></div>
   )

@@ -5,7 +5,6 @@ preferred_name: (FARZAD)
 last_name: JAMALI
 role: AI & Computer Vision Engineer | MPhil Researcher
 location: Manchester, UK
-phone: +44 7760 814542
 email: ali292jamali@gmail.com
 profile_links:
   - label: LinkedIn
@@ -36,13 +35,13 @@ I am an AI and Computer Vision engineer with research experience at the Universi
 
 **Engineering:** technical drawings, stress analysis *(AutoCAD Mechanical, SolidWorks, CATIA)*.
 
+**Engineering and simulation:** MATLAB, Simulink, SolidWorks, Proteus, CATIA, AutoCAD Mechanical; mechanical design and modelling; FEA within solar-tracker research.
+
+**Control and prototyping:** physical tracker construction and programming, electronic and motor control, integration of software and mechanical hardware in an Arduino-based research system.
+
+**Software and data:** FastAPI, REST APIs, SQL, Pandas, NumPy, Git, Docker, pytest, Streamlit; reproducible training pipelines, data processing, dashboards and technical documentation.
+
 # Applied AI & Research Projects
-
-**Floor Plan Document Intelligence** *\| Independent project (real client brief), 2026*
-
-- Built a pipeline on CubiCasa5K that turns floor-plan images and PDF pages into structured building data. Combined SegFormer-B0 segmentation, Tesseract OCR and vector geometry to find rooms and openings and link them to text labels.
-
-- Raised five-class mIoU from a classical baseline of 0.312 to 0.577 on held-out data. Added a Streamlit interface for reviewing results and confidence scores.
 
 **Recommendation & Analytics Platform** *\| Delivered to World Privilege Plus, 2025–2026*
 
@@ -50,15 +49,28 @@ I am an AI and Computer Vision engineer with research experience at the Universi
 
 - Turned business requirements into a working system, explained the results to non-technical colleagues and handed over the completed platform for use in the business.
 
+**Floor Plan Document Intelligence** *\| Independent project (real client brief), 2026*
+
+- Built a pipeline on CubiCasa5K that turns floor-plan images and PDF pages into structured building data. Combined SegFormer-B0 segmentation, Tesseract OCR and vector geometry to find rooms and openings and link them to text labels.
+
+- Raised five-class mIoU from a classical baseline of 0.312 to 0.577 on held-out data. Added a Streamlit interface for reviewing results and confidence scores.
+
 **Industrial Fabric Defect Inspection** *\| Independent project (real client brief), 2026*
 
 - Built a defect segmentation pipeline on the AITEX dataset using PyTorch and OpenCV. Compared a classical texture baseline with a U-Net/ResNet-18 model and processed full-resolution images in tiles.
 
 - Used a locked holdout set to control for data leakage. Dice rose from 0.259 to 0.532, with image-level ROC-AUC of 0.878.
 
-```{=latex}
-\newpage
-```
+- Used error analysis, validation-only threshold selection and source-image splits; examined sensitivity to brightness, contrast, blur and rotation and the trade-off between missed defects and false alarms.
+
+**Dual-Axis Solar Tracker | Mechanical Design, Control and Automation**
+
+*Collaborative MSc engineering research | Shahid Beheshti University*
+
+- Built and programmed a physical dual-axis tracker as part of the research team, using MATLAB, Simulink, SolidWorks and Proteus for engineering calculations, modelling and control development.
+- The team's design combined shafts, bearings, geared DC motors and structural supports, with SolidWorks finite element analysis and Arduino-based control. Open-loop solar-position calculations provided targets for closed-loop motor-position control.
+- The published experiments reported approximately 49% higher net energy generation than a fixed panel under the stated test conditions, after motor energy use. Co-authored the peer-reviewed paper published in 2023.
+
 
 **Evidence-Constrained Multimodal Fashion Recommendation** *\| MPhil thesis project*
 
@@ -118,15 +130,12 @@ I am an AI and Computer Vision engineer with research experience at the Universi
 
 - Produced orthographic and three-view drawings for manufacturing jigs and fixtures in AutoCAD Mechanical. Assisted with mechanical design and simulation.
 
-```{=latex}
-\newpage
-```
 
 # Education
 
 **MPhil, Computer Science & Artificial Intelligence \| University of Salford**
 
-*Sep 2025 – Expected Nov 2026 \| Salford, UK*
+*MPhil awarded | MPhil researcher \| Salford, UK*
 
 - Thesis on evidence-grounded fashion recommendation. Built and evaluated a multimodal recommender that explains its choices and verifies those explanations against a knowledge base.
 
