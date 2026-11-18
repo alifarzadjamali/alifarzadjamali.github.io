@@ -6,7 +6,7 @@ export type Project = {
   detail: string
   tags: string[]
   repository: string
-  visual: 'fashion' | 'floorplan'
+  visual: 'fashion' | 'floorplan' | 'fabric' | 'benchmark'
   stages: { label: string; description: string }[]
 }
 
@@ -24,7 +24,7 @@ export type PortfolioContent = {
   experience: { title: string; organization: string; description: string }[]
   teaching: { title: string; organization: string; description: string }
   skills: { label: string; items: string[] }[]
-  links: { github: string; linkedin: string; email: string }
+  links: { github: string; linkedin: string; googleScholar: string; orcid: string; email: string }
   cv: { href: string; label: string; note: string }
 }
 
@@ -38,7 +38,7 @@ export const content: PortfolioContent = {
   location: 'Manchester, UK',
   intro: 'I build practical AI systems that connect visual understanding, multimodal retrieval, and evidence you can inspect.',
   about: [
-    'I work across computer vision, recommendation, document intelligence, and grounded AI. My projects move from data and models through evaluation and usable review tools.',
+    "I'm Ali Jamali, but everyone calls me Farzad. You may also know me as Farzad Jamali. I work across computer vision, recommendation, document intelligence, and grounded AI. My projects move from data and models through evaluation and usable review tools.",
     'I am completing an MPhil in Computer Science & Artificial Intelligence at the University of Salford. My earlier background in mechanical engineering informs how I approach real-world systems.',
   ],
   focus: [
@@ -69,7 +69,7 @@ export const content: PortfolioContent = {
       summary: 'A pipeline that turns raster floor plans into five-class segmentation masks, OCR tokens, approximate polygons, and review-aware JSON.',
       detail: 'Uses SegFormer-B0, Tesseract, conservative spatial links, and a local inspection viewer. Geometry is approximate pixel-coordinate output, not CAD or BIM reconstruction.',
       tags: ['SegFormer', 'OCR', 'Geometry', 'Evaluation'],
-      repository: 'https://github.com/farzadismyid/floor-plan-document-intelligence',
+      repository: 'https://github.com/alifarzadjamali/floor-plan-document-intelligence',
       visual: 'floorplan',
       stages: [
         { label: 'Segment', description: 'Predict five classes from a raster floor plan.' },
@@ -77,11 +77,33 @@ export const content: PortfolioContent = {
         { label: 'Review', description: 'Inspect approximate polygons and JSON before use.' },
       ],
     },
+    {
+      number: '03', title: 'Industrial Fabric Defect Inspection', category: 'Computer vision',
+      summary: 'A fabric inspection prototype that identifies defects in woven fabric and marks affected pixels.',
+      detail: 'A U-Net with a ResNet-18 encoder produces defect probability maps, with overlapping inference and evaluation on a locked holdout. The system remains a research prototype.',
+      tags: ['U-Net', 'ResNet-18', 'Segmentation', 'AITEX'], repository: 'https://github.com/alifarzadjamali/industrial-fabric-defect-inspection', visual: 'fabric',
+      stages: [
+        { label: 'Prepare', description: 'Split source images and prepare fabric crops and masks.' },
+        { label: 'Inspect', description: 'Predict pixel-level defect probabilities with a U-Net.' },
+        { label: 'Evaluate', description: 'Assess segmentation and image-level detection on a locked holdout.' },
+      ],
+    },
+    {
+      number: '04', title: 'Fashion Compatibility Benchmark', category: 'Representation learning',
+      summary: 'A benchmark comparing frozen image representations for outfit compatibility prediction and fill-in-the-blank completion.',
+      detail: 'The comparison uses shared train-only preprocessing, PCA, symmetric pair features, and a logistic classifier across image representations.',
+      tags: ['CLIP', 'Representation learning', 'PCA', 'Evaluation'], repository: 'https://github.com/alifarzadjamali/fashion-compatibility-benchmark', visual: 'benchmark',
+      stages: [
+        { label: 'Extract', description: 'Extract features from frozen image representations.' },
+        { label: 'Train', description: 'Fit preprocessing and a classifier using training data.' },
+        { label: 'Compare', description: 'Evaluate outfit compatibility and fill-in-the-blank completion.' },
+      ],
+    },
   ],
   research: {
     heading: 'Multimodal recommendation & grounded explanations',
-    description: 'My stated MPhil focus is multimodal recommendation and grounded AI explanations. The public fashion recommender repository shows the applied pipeline: retrieval, rule evidence, explanation generation, and support checks.',
-    note: 'Publications and formal research outcomes will be added only after verification.',
+    description: 'My MPhil research focuses on multimodal recommendation and grounded AI explanations. The public fashion recommender repository shows the applied pipeline: retrieval, rule evidence, explanation generation, and support checks.',
+    note: 'Publications are listed on Google Scholar',
   },
   experience: [
     {
@@ -93,7 +115,7 @@ export const content: PortfolioContent = {
   teaching: {
     title: 'Deep Learning teaching support',
     organization: 'University of Salford',
-    description: 'Teaching support is listed on my public GitHub profile. Course titles, dates, and responsibilities can be added after verification.',
+    description: 'Teaching support for Deep Learning at the University of Salford.',
   },
   skills: [
     { label: 'Vision & ML', items: ['PyTorch', 'OpenCV', 'SegFormer', 'CLIP', 'Image segmentation'] },
@@ -103,6 +125,8 @@ export const content: PortfolioContent = {
   links: {
     github: 'https://github.com/alifarzadjamali',
     linkedin: 'https://www.linkedin.com/in/alifarzadjamali/',
+    googleScholar: 'https://scholar.google.com/citations?user=xd6LP18AAAAJ',
+    orcid: 'https://orcid.org/0009-0001-0678-4155',
     email: `mailto:${emailAddress}`,
   },
   cv: {

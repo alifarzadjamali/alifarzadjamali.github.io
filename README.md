@@ -1,4 +1,6 @@
-# Farzad Jamali portfolio
+# Ali (Farzad) Jamali ? portfolio
+
+Live site: https://alifarzadjamali.github.io/
 
 ## Licence
 
@@ -45,7 +47,7 @@ Before publishing:
 The project copy was grounded in the public GitHub profile and these repositories:
 
 - [Evidence-based fashion recommender](https://github.com/alifarzadjamali/evidence-based-fashion-recommender)
-- [Floor-plan document intelligence](https://github.com/farzadismyid/floor-plan-document-intelligence) (redirects to the current owner URL)
+- [Floor-plan document intelligence](https://github.com/alifarzadjamali/floor-plan-document-intelligence)
 
 The abstract project graphics are CSS, not photographs or screenshots of project results.
 
