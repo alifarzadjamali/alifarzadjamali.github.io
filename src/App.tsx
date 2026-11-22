@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 import { SiteFooter } from './SiteFooter'
+import { HeroGrid } from './HeroGrid'
 
 const navigation = [
   ['About', '#about'],
@@ -233,9 +234,9 @@ function App() {
 
       <main id="main" tabIndex={-1}>
         <section className="hero" id="top" aria-labelledby="hero-title" onPointerMove={event => { if (reducedMotion || event.pointerType === 'touch') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`) }}>
-          <div className="hero-grid" aria-hidden="true" />
           <div className="container hero-content">
-            <motion.div className="hero-copy max-w-[680px]">
+            <HeroGrid />
+            <motion.div className="hero-copy">
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
               <h1 id="hero-title" className="hero-name">{content.name}</h1><div className="hero-headline">Building AI<br /><span>with clarity.</span></div>
               <p className="hero-role">{content.role}</p>

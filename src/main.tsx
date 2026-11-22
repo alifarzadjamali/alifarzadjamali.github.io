@@ -2,6 +2,8 @@ import React from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import App from './App'
 import { ProjectPage, projectForPath } from './ProjectPage'
+import '@fontsource-variable/archivo/wdth.css'
+import '@fontsource-variable/jetbrains-mono'
 import './styles.css'
 
 const root = document.getElementById('root')!
