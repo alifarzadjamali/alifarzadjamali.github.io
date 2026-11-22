@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 import { SiteFooter } from './SiteFooter'
 import { HeroGrid } from './HeroGrid'
+import { VisionSection } from './VisionSection'
 
 const navigation = [
   ['About', '#about'],
@@ -251,8 +252,10 @@ function App() {
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
-          <div className="container hero-bottom"><a className="hero-scroll-link" href="#about">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {year}</span></div>
+          <div className="container hero-bottom"><a className="hero-scroll-link" href="#vision">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {year}</span></div>
         </section>
+
+        <VisionSection />
 
         <section className="section about-section" id="about" aria-labelledby="about-title">
           <div className="container about-grid"><SectionHeading id="about-title" number="01" eyebrow="ABOUT" title="A practical mind for complex systems." /><div className="about-copy">{content.about.map(paragraph => <p key={paragraph}>{paragraph}</p>)}<div className="about-foot"><span className="small-square" /><span>Research-informed thinking. Engineering-led execution.</span></div></div></div>

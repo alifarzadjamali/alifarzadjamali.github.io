@@ -250,3 +250,40 @@ button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration
   .project-body{padding:0}.research-content{border:0;padding:0}.contact-links{padding-top:12px;justify-self:start}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;overflow-wrap:anywhere}
 }
+
+/* ---------- How a machine sees ---------- */
+.vision{position:relative;border-bottom:1px solid var(--fg-7);background:var(--bg-1)}
+.vision .section-kicker{margin:0 0 28px;font-size:11px;color:var(--fg-2)}.vision .section-kicker::before{background:var(--red)}
+.vision-steps{list-style:none;margin:0;padding:0}
+.vision-step-label{display:block;margin-bottom:14px;font-family:var(--font-code);font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--accent)}
+.vision-steps h3{margin:0 0 14px;font-size:clamp(30px,3.6vw,56px);line-height:.92;font-weight:800;font-stretch:125%;letter-spacing:-.035em}
+.vision-steps p{margin:0;max-width:380px;font-size:17px;line-height:1.55;font-weight:500;color:var(--fg-3)}
+.vision-note{margin:22px 0 0;font-family:var(--font-code);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--fg-4)}
+.vision-progress{display:flex;gap:6px;margin-top:32px}.vision-progress span{width:28px;height:4px;border-radius:4px;background:var(--fg-7);transition:background .4s}.vision-progress span.is-done{background:var(--accent)}
+
+/* Static fallback (no WebGL, reduced motion, before hydration) */
+.vision-static{padding:clamp(90px,12vw,170px) 0}
+.vision-static .vision-canvas,.vision-static .vision-progress{display:none}
+.vision-static .vision-sticky{width:min(100% - 64px,1280px);margin-inline:auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,96px);align-items:center}
+.vision-static .vision-overlay{width:auto;margin:0}
+.vision-static .vision-steps{display:grid;gap:30px}.vision-static .vision-steps h3{font-size:clamp(22px,2.2vw,30px)}.vision-static .vision-steps p{font-size:15px}
+.vision-static-canvas{width:100%;height:auto;border-radius:18px;background:var(--bg-2)}
+
+/* Scroll-driven 3D */
+.vision-scroll{height:520vh}
+.vision-scroll .vision-static-canvas{display:none}
+.vision-scroll .vision-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.vision-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vision-scroll .vision-overlay{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:center;pointer-events:none}
+.vision-scroll .vision-steps{position:relative;display:grid;max-width:440px}
+.vision-scroll .vision-steps li{grid-area:1/1;opacity:0;transform:translateY(28px);transition:opacity .45s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.vision-scroll .vision-steps li.is-active{opacity:1;transform:none}
+@media(max-width:800px){
+  .vision-static .vision-sticky{grid-template-columns:1fr;width:min(100% - 40px,1320px)}
+  .vision-scroll{height:480vh}
+  .vision-scroll .vision-overlay{justify-content:flex-end;padding-bottom:28px;background:linear-gradient(to top,var(--bg-1) 0%,color-mix(in srgb,var(--bg-1) 85%,transparent) 32%,transparent 46%)}
+  .vision-scroll .vision-steps h3{font-size:clamp(26px,8vw,36px)}.vision-scroll .vision-steps p{font-size:15px}
+  .vision .section-kicker{margin-bottom:16px}.vision-progress{margin-top:20px}.vision-note{margin-top:12px}
+}
+@media(max-width:540px){.vision-static .vision-sticky{width:min(100% - 32px,1320px)}}
+@media print{.vision-canvas,.vision-progress{display:none!important}.vision-scroll{height:auto}.vision-scroll .vision-sticky{position:static;height:auto}.vision-scroll .vision-steps li{opacity:1;transform:none;grid-area:auto}}
