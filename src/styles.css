@@ -287,3 +287,75 @@ button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration
 }
 @media(max-width:540px){.vision-static .vision-sticky{width:min(100% - 32px,1320px)}}
 @media print{.vision-canvas,.vision-progress{display:none!important}.vision-scroll{height:auto}.vision-scroll .vision-sticky{position:static;height:auto}.vision-scroll .vision-steps li{opacity:1;transform:none;grid-area:auto}}
+
+/* ---------- Project stories (scroll-driven 3D per project) ---------- */
+.project-story{--accent:var(--orange);position:relative;height:420vh;width:100vw;margin-left:calc(50% - 50vw);scroll-margin-top:0}
+.project-story-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.project-story-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.project-story-overlay{position:relative;z-index:1;height:100%;display:flex;align-items:center;pointer-events:none}
+.project-story-panel{max-width:420px;pointer-events:auto}
+.project-story-meta{display:block;font-family:var(--font-code);font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.project-story h3{margin:16px 0 26px;font-size:clamp(30px,3.4vw,52px);line-height:.92;font-weight:800;font-stretch:125%;letter-spacing:-.035em}.project-story h3 a:hover{color:var(--accent)}
+.project-story-phases{list-style:none;margin:0;padding:0;border-left:2px solid var(--fg-7)}
+.project-story-phases li{position:relative;padding:10px 0 10px 20px;opacity:.38;transition:opacity .4s}
+.project-story-phases li::before{content:"";position:absolute;left:-2px;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+.project-story-phases li.is-active{opacity:1}.project-story-phases li.is-done{opacity:.6}.project-story-phases li.is-active::before,.project-story-phases li.is-done::before{transform:scaleY(1)}
+.project-story-phase-label{display:block;font-size:clamp(18px,1.6vw,22px);font-weight:800;font-stretch:118%;letter-spacing:-.01em}.project-story-phases li.is-active .project-story-phase-label{color:var(--accent)}
+.project-story-phases p{margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--fg-3)}
+.project-story-links{display:flex;flex-wrap:wrap;gap:22px;margin-top:28px}.project-story-links .text-link{margin-top:0}
+@media(max-width:800px){
+  .project-story{height:380vh}
+  .project-story-overlay{align-items:flex-end;padding-bottom:24px;background:linear-gradient(to top,var(--bg-1) 0%,color-mix(in srgb,var(--bg-1) 88%,transparent) 40%,transparent 52%)}
+  .project-story h3{margin:10px 0 14px;font-size:clamp(24px,7vw,32px)}
+  .project-story-phases li{padding:6px 0 6px 16px}.project-story-phases li:not(.is-active) p{display:none}.project-story-phases p{font-size:14px}
+  .project-story-links{margin-top:16px}
+}
+
+/* ---------- Balanced two-column layout for scroll scenes (text | stage) ---------- */
+.project-story{height:330vh}
+.project-story-overlay,.vision-scroll .vision-overlay{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(32px,4.5vw,80px);align-items:center;height:100%;padding-block:96px 40px}
+.project-story-panel,.vision-scroll .vision-text{max-width:none;min-width:0}
+.project-story-stage,.vision-stage{width:100%;height:min(74vh,660px);height:min(74svh,660px)}
+.vision-static .vision-stage{display:none}
+.project-story h3{font-size:clamp(34px,3.7vw,60px);margin:14px 0 28px}
+.project-story-phase-label{font-size:clamp(20px,1.8vw,26px)}
+.project-story-phases p{font-size:clamp(15px,1.15vw,17px);max-width:460px}
+.vision-scroll .vision-steps{max-width:none}.vision-scroll .vision-steps h3{font-size:clamp(34px,3.9vw,62px)}.vision-scroll .vision-steps p{font-size:clamp(16px,1.3vw,19px);max-width:460px}
+.project-story-index{display:flex;gap:6px;margin-bottom:26px}
+.project-story-index a{display:grid;place-items:center;min-width:38px;height:28px;padding:0 8px;border-radius:7px;background:var(--bg-3);color:var(--fg-3);font-family:var(--font-code);font-size:11px;transition:background .2s,color .2s}
+.project-story-index a:hover{color:var(--fg-1)}.project-story-index a[aria-current="true"]{background:var(--accent);color:var(--bg-1)}
+.project-index{display:flex;flex-wrap:wrap;gap:8px;margin-top:44px}
+.project-index a{display:inline-flex;align-items:center;gap:10px;padding:9px 14px 9px 10px;border-radius:9px;background:var(--bg-3);color:var(--fg-2);font-size:14px;font-weight:700;transition:background .2s,color .2s}
+.project-index a span{font-family:var(--font-code);font-size:11px;font-weight:500;color:var(--fg-4)}
+.project-index a:hover{background:var(--fg-1);color:var(--bg-1)}.project-index a:hover span{color:var(--bg-1)}
+.project-index+.project-list{margin-top:56px}
+@media(max-width:900px){
+  .project-story-overlay,.vision-scroll .vision-overlay{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;align-items:stretch;padding-block:80px 22px}
+  .project-story-stage,.vision-stage{order:-1;height:100%;min-height:0}
+  .project-story-overlay,.vision-scroll .vision-overlay{background:linear-gradient(to top,var(--bg-1) 0%,color-mix(in srgb,var(--bg-1) 88%,transparent) 38%,transparent 50%)}
+  .project-story{height:300vh}
+  .project-story h3{font-size:clamp(24px,7vw,34px);margin:8px 0 12px}
+  .project-story-index{margin-bottom:12px}.project-story-index a{min-width:32px;height:24px}
+  .project-story-phase-label{font-size:18px}
+  .vision-scroll .vision-steps h3{font-size:clamp(26px,8vw,36px)}.vision-scroll .vision-steps p{font-size:15px}
+}
+
+/* ---------- One pinned stage for all projects ---------- */
+.project-stories{--slice:300vh;position:relative;height:calc(var(--count) * var(--slice));width:100vw;margin-left:calc(50% - 50vw);margin-top:56px}
+.project-track{position:absolute;left:0;right:0;top:calc(var(--i) * var(--slice));height:var(--slice);pointer-events:none;scroll-margin-top:0}
+.project-stories-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.project-layer{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility 0s linear .55s}
+.project-layer.is-active{opacity:1;visibility:visible;transition:opacity .55s ease .1s,visibility 0s}
+.project-layer .project-story-panel{transform:translateY(18px);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.project-layer.is-active .project-story-panel{transform:none}
+.project-layer .project-story-overlay{height:100%}
+@media(max-width:900px){.project-stories{--slice:280vh}}
+
+/* "How a machine sees" sits a step larger than the project scenes */
+.vision-scroll .vision-overlay{width:min(100% - 64px,1440px);max-width:none;grid-template-columns:minmax(0,5fr) minmax(0,6.4fr)}
+.vision-scroll .vision-stage{height:min(84vh,800px);height:min(84svh,800px)}
+.vision-scroll .vision-steps h3{font-size:clamp(38px,4.6vw,78px)}
+.vision-scroll .vision-steps p{font-size:clamp(17px,1.45vw,21px);max-width:520px}
+.vision .section-kicker{font-size:12px}
+@media(max-width:900px){.vision-scroll .vision-overlay{width:min(100% - 40px,1440px);grid-template-columns:minmax(0,1fr)}.vision-scroll .vision-stage{height:100%}.vision-scroll .vision-steps h3{font-size:clamp(28px,8.5vw,40px)}.vision-scroll .vision-steps p{font-size:15px}}
+.project-stories .project-layer{position:absolute;inset:0;width:auto;height:auto;margin:0}

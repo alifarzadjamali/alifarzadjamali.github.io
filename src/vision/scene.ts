@@ -1,11 +1,11 @@
 import * as THREE from 'three'
+import { fitToStage } from '../story/engine'
 import { BACKGROUND_COLOR, GRID, IMG, OBJECTS, drawLabel, drawSource, tileClasses } from './image'
 
 const N = GRID * GRID
 const IMAGE_SIZE = 4
 const TILE = IMAGE_SIZE / GRID
 const FOV = 35
-const TAN = Math.tan((FOV * Math.PI) / 360)
 
 /** Scroll ranges for each transition between the five states. */
 const SEGMENTS = [
@@ -72,7 +72,7 @@ void main() {
   gl_FragColor = vec4(color, 1.0);
 }`
 
-export function createVisionScene(canvas: HTMLCanvasElement, section: HTMLElement, onStep: (step: number) => void) {
+export function createVisionScene(canvas: HTMLCanvasElement, section: HTMLElement, stage: HTMLElement, onStep: (step: number) => void) {
   THREE.ColorManagement.enabled = false
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' })
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace
@@ -197,18 +197,9 @@ export function createVisionScene(canvas: HTMLCanvasElement, section: HTMLElemen
     const height = canvas.clientHeight
     if (!width || !height) return
     renderer.setSize(width, height, false)
-    const aspect = width / height
-    camera.aspect = aspect
-    const mobile = aspect < 0.9
-    const fw = mobile ? 0.94 : 0.58
-    const fh = mobile ? 0.6 : 0.84
-    const distance = (IMAGE_SIZE * 1.12) / (2 * TAN * Math.min(aspect * fw, fh))
-    const visH = 2 * distance * TAN
-    const visW = visH * aspect
-    camera.position.set(0, 0, distance)
-    camera.updateProjectionMatrix()
-    layout = { offsetX: mobile ? 0 : visW * (1 - fw) / 2, offsetY: mobile ? visH * (1 - fh) / 2 : 0, usableW: visW * fw, usableH: visH * fh }
-    group.position.set(layout.offsetX, layout.offsetY, 0)
+    camera.aspect = width / height
+    const size = fitToStage(camera, group, canvas, stage, [IMAGE_SIZE * 1.04, IMAGE_SIZE * 1.04])
+    layout = { offsetX: group.position.x, offsetY: group.position.y, usableW: size.width, usableH: size.height }
     buildStates()
   }
 
@@ -280,6 +271,7 @@ export function createVisionScene(canvas: HTMLCanvasElement, section: HTMLElemen
   observer.observe(section)
   const resizeObserver = new ResizeObserver(() => { resize(); if (!visible) update() })
   resizeObserver.observe(canvas)
+  resizeObserver.observe(stage)
   const onPointer = (event: PointerEvent) => { if (event.pointerType === 'touch') return; pointerX = event.clientX / window.innerWidth - 0.5; pointerY = event.clientY / window.innerHeight - 0.5 }
   window.addEventListener('pointermove', onPointer, { passive: true })
   resize()

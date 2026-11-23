@@ -12,6 +12,7 @@ export function VisionSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const staticRef = useRef<HTMLCanvasElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
   const [mode, setMode] = useState<'static' | 'scroll'>('static')
   const [step, setStep] = useState(0)
 
@@ -36,7 +37,8 @@ export function VisionSection() {
     if (mode !== 'scroll') return
     const section = sectionRef.current
     const canvas = canvasRef.current
-    if (!section || !canvas) return
+    const stage = stageRef.current
+    if (!section || !canvas || !stage) return
     let disposed = false
     let cleanup: (() => void) | undefined
     const observer = new IntersectionObserver(([entry]) => {
@@ -44,7 +46,7 @@ export function VisionSection() {
       observer.disconnect()
       void Promise.all([import('./vision/scene'), document.fonts.ready]).then(([{ createVisionScene }]) => {
         if (disposed) return
-        try { cleanup = createVisionScene(canvas, section, setStep) } catch { setMode('static') }
+        try { cleanup = createVisionScene(canvas, section, stage, setStep) } catch { setMode('static') }
       }, () => setMode('static'))
     }, { rootMargin: '100% 0px' })
     observer.observe(section)
@@ -56,6 +58,7 @@ export function VisionSection() {
       <div className="vision-sticky">
         <canvas ref={canvasRef} className="vision-canvas" aria-hidden="true" />
         <div className="container vision-overlay">
+          <div className="vision-text">
           <h2 id="vision-title" className="section-kicker"><span>00</span><span>HOW A MACHINE SEES</span></h2>
           <ol className="vision-steps">
             {STEPS.map((item, index) => (
@@ -68,6 +71,8 @@ export function VisionSection() {
           </ol>
           <div className="vision-progress" aria-hidden="true">{STEPS.map((item, index) => <span key={item.label} className={index <= step ? 'is-done' : undefined} style={{ '--accent': item.color } as CSSProperties} />)}</div>
           <p className="vision-note">Illustration of the idea, not real model output.</p>
+          </div>
+          <div ref={stageRef} className="vision-stage" aria-hidden="true" />
         </div>
         <canvas ref={staticRef} className="vision-static-canvas" width={768} height={768} role="img" aria-label="A simple scene with a sphere, a cube and a cylinder. Each object has a coloured mask, a detection box and a label." />
       </div>
