@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintColor } from './palette'
 import { chip, mix, random, runStory, segment, type BuildContext, type StoryScene } from './engine'
 import { GARMENTS as TYPES, atlasOffset, dressCells, garmentAtlas, type Garment } from './garments'
 
@@ -14,7 +15,7 @@ const ORDER_A: Garment[] = ['skirt', 'top', 'bag', 'cardigan', 'trousers', 'shoe
 const ORDER_B: Garment[] = ['cardigan', 'bag', 'shoe', 'skirt', 'top', 'coat', 'trousers', 'hat']
 const SCORES_A = [0.95, 0.9, 0.86, 0.82, 0.78, 0.72, 0.66, 0.6]
 const SCORES_B = [0.97, 0.93, 0.9, 0.7, 0.64, 0.55, 0.48, 0.4]
-const OUTFIT: Partial<Record<Garment, [number, number, number]>> = { cardigan: [1.35, 0.78, 0.2], bag: [1.45, -0.38, 0.2], shoe: [0.95, -1.45, 0.2] }
+const OUTFIT: Partial<Record<Garment, [number, number, number]>> = { cardigan: [1.8, 0.85, 0.2], bag: [1.9, -0.3, 0.2], shoe: [1.55, -1.35, 0.2] }
 
 const cardVertex = /* glsl */ `
 attribute vec2 aUv; attribute float aDim; attribute float aHi;
@@ -30,7 +31,7 @@ void main() { vec2 p = vLocal - 0.5; float k = 0.14;
   color = mix(color, uHi, vHi * step(-0.035, d));
   gl_FragColor = vec4(color, 1.0); }`
 
-function hex(color: string) { return new THREE.Color(color) }
+function hex(color: string) { return paintColor(color) }
 
 export function createFashionScene(canvas: HTMLCanvasElement, section: HTMLElement, stage: HTMLElement, onPhase: (phase: number) => void) {
   return runStory(canvas, section, stage, PHASE_STARTS, onPhase, ({ group }: BuildContext): StoryScene => {
@@ -93,11 +94,13 @@ export function createFashionScene(canvas: HTMLCanvasElement, section: HTMLEleme
     const delays = cloud.map(() => rand())
 
     // Target positions for the shortlisted cards in each state.
-    const ring = (rank: number) => { const angle = mix(1.15, -1.15, rank / 7); return new THREE.Vector3(DRESS.x + Math.cos(angle) * 2.05, DRESS.y + Math.sin(angle) * 1.65, 0.1) }
+    // the ring sits to the right of the dress, so no card covers the query image
+    const ring = (rank: number) => { const angle = mix(0.95, -0.95, rank / 7); return new THREE.Vector3(DRESS.x + 0.95 + Math.cos(angle) * 1.95, DRESS.y + Math.sin(angle) * 1.75, 0.1) }
     const row = (rank: number) => new THREE.Vector3(1.3, 1.75 - rank * 0.5, 0.1)
 
     // Similarity lines from the query to the shortlist.
-    const anchor = new THREE.Vector3(DRESS.x + 0.6, DRESS.y + 0.35, 0.05)
+    // lines leave from just outside the skirt's widest point, so they never cross the dress
+    const anchor = new THREE.Vector3(DRESS.x + 1.18, DRESS.y + 0.05, 0.05)
     const linePositions = new Float32Array(TYPES.length * 6)
     const lineGeometry = new THREE.BufferGeometry()
     lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3))

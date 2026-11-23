@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintColor } from './palette'
 import { chip, mix, runStory, segment, type BuildContext, type StoryScene } from './engine'
 import { hexRgb, lerpRgb, outline, panel, scaleRgb, type Rgb } from './helpers'
 
@@ -50,7 +51,7 @@ export function createFloorplanScene(canvas: HTMLCanvasElement, section: HTMLEle
     const toWorld = (x: number, y: number) => [(x - W / 2) * CELL, (H / 2 - y) * CELL] as const
 
     // Scan line for the OCR pass.
-    const scanMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(ACCENT), transparent: true, opacity: 0, depthWrite: false })
+    const scanMaterial = new THREE.MeshBasicMaterial({ color: paintColor(ACCENT), transparent: true, opacity: 0, depthWrite: false })
     const scan = new THREE.Mesh(new THREE.PlaneGeometry(W * CELL + 0.3, 0.035), scanMaterial)
     scan.renderOrder = 3
     plan.add(scan)

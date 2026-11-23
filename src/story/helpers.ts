@@ -1,36 +1,40 @@
 import * as THREE from 'three'
-import { mix } from './engine'
+import { mix, sharpTexture } from './engine'
+import { paintColor, paintCss, paintRgb } from './palette'
 
 /** A multi-line monospace panel (e.g. JSON) as a texture-mapped plane; lineHeight in world units. */
 export function panel(lines: string[], lineHeight: number, options: { background?: string; color?: string; accent?: string } = {}) {
-  const fontSize = 34
-  const font = `500 ${fontSize}px "JetBrains Mono Variable", ui-monospace, monospace`
-  const measure = document.createElement('canvas').getContext('2d')!
-  measure.font = font
-  const pad = fontSize * 0.8
-  const width = Math.ceil(Math.max(...lines.map(line => measure.measureText(line).width)) + pad * 2)
-  const height = Math.ceil(lines.length * fontSize * 1.45 + pad * 1.6)
-  const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  const ctx = canvas.getContext('2d')!
-  ctx.fillStyle = options.background ?? '#1d1c1b'
-  ctx.beginPath()
-  ctx.roundRect(0, 0, width, height, fontSize * 0.5)
-  ctx.fill()
-  if (options.accent) { ctx.strokeStyle = options.accent; ctx.lineWidth = 4; ctx.stroke() }
-  ctx.font = font
-  ctx.textBaseline = 'top'
-  lines.forEach((line, index) => {
-    ctx.fillStyle = /^\s*"/.test(line) ? (options.accent ?? '#f6f4f2') : (options.color ?? '#b4b1af')
-    ctx.fillText(line, pad, pad * 0.8 + index * fontSize * 1.45)
-  })
-  const texture = new THREE.CanvasTexture(canvas)
-  texture.colorSpace = THREE.NoColorSpace
-  texture.anisotropy = 4
+  const draw = (scale: number | null) => {
+    const fontSize = scale ? Math.min(160, Math.max(7, (lineHeight * scale) / 1.45)) : 76
+    const font = `500 ${fontSize}px "JetBrains Mono Variable", ui-monospace, monospace`
+    const measure = document.createElement('canvas').getContext('2d')!
+    measure.font = font
+    const pad = fontSize * 0.8
+    const width = Math.ceil(Math.max(...lines.map(line => measure.measureText(line).width)) + pad * 2)
+    const height = Math.ceil(lines.length * fontSize * 1.45 + pad * 1.6)
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')!
+    ctx.fillStyle = paintCss(options.background ?? '#1d1c1b')
+    ctx.beginPath()
+    ctx.roundRect(0, 0, width, height, fontSize * 0.5)
+    ctx.fill()
+    if (options.accent) { ctx.strokeStyle = paintCss(options.accent); ctx.lineWidth = Math.max(1, fontSize * 0.12); ctx.stroke() }
+    ctx.font = font
+    ctx.textBaseline = 'top'
+    lines.forEach((line, index) => {
+      ctx.fillStyle = paintCss(/^\s*"/.test(line) ? (options.accent ?? '#f6f4f2') : (options.color ?? '#b4b1af'))
+      ctx.fillText(line, pad, pad * 0.8 + index * fontSize * 1.45)
+    })
+    return canvas
+  }
+  const texture = sharpTexture(draw)
+  const first = texture.image as HTMLCanvasElement
   const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0, depthWrite: false })
-  const worldHeight = (lineHeight * height) / (fontSize * 1.45)
-  const geometry = new THREE.PlaneGeometry((worldHeight * width) / height, worldHeight)
+  // one text line = lineHeight world units; the default draw uses 76px text with 1.45 line spacing
+  const worldHeight = (lineHeight * first.height) / (76 * 1.45)
+  const geometry = new THREE.PlaneGeometry((worldHeight * first.width) / first.height, worldHeight)
   const mesh = new THREE.Mesh(geometry, material)
   mesh.renderOrder = 2
   return { mesh, material, dispose: () => { texture.dispose(); material.dispose(); geometry.dispose() } }
@@ -81,7 +85,7 @@ export function createTiles(count: number, map?: THREE.Texture) {
 export type Rgb = [number, number, number]
 export function hexRgb(hex: string): Rgb {
   const value = parseInt(hex.slice(1), 16)
-  return [((value >> 16) & 255) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255]
+  return paintRgb([((value >> 16) & 255) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255])
 }
 export function lerpRgb(a: Rgb, b: Rgb, t: number): Rgb {
   return [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)]
@@ -90,8 +94,8 @@ export function scaleRgb(a: Rgb, k: number): Rgb { return [a[0] * k, a[1] * k, a
 
 function lineMaterial(color: string, dashed: boolean) {
   return dashed
-    ? new THREE.LineDashedMaterial({ color: new THREE.Color(color), dashSize: 0.08, gapSize: 0.06, transparent: true, opacity: 0, depthWrite: false })
-    : new THREE.LineBasicMaterial({ color: new THREE.Color(color), transparent: true, opacity: 0, depthWrite: false })
+    ? new THREE.LineDashedMaterial({ color: paintColor(color), dashSize: 0.08, gapSize: 0.06, transparent: true, opacity: 0, depthWrite: false })
+    : new THREE.LineBasicMaterial({ color: paintColor(color), transparent: true, opacity: 0, depthWrite: false })
 }
 /** Closed polyline outline (world units). */
 export function outline(points: [number, number][], color: string, dashed = false) {

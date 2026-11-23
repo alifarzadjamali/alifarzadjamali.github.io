@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintColor } from './palette'
 import { atlasOffset, garmentAtlas } from './garments'
 
 const cardVertex = /* glsl */ `
@@ -26,7 +27,7 @@ export function createCards(types: number[], highlight: string) {
   geometry.setAttribute('aUv', new THREE.InstancedBufferAttribute(uvs, 2))
   geometry.setAttribute('aDim', dim)
   geometry.setAttribute('aHi', hi)
-  const material = new THREE.ShaderMaterial({ vertexShader: cardVertex, fragmentShader: cardFragment, uniforms: { uMap: { value: atlas }, uHi: { value: new THREE.Color(highlight) } }, side: THREE.DoubleSide })
+  const material = new THREE.ShaderMaterial({ vertexShader: cardVertex, fragmentShader: cardFragment, uniforms: { uMap: { value: atlas }, uHi: { value: paintColor(highlight) } }, side: THREE.DoubleSide })
   const mesh = new THREE.InstancedMesh(geometry, material, types.length)
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
   mesh.frustumCulled = false

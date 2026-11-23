@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintColor } from './palette'
 import { createCards } from './cards'
 import { chip, mix, random, runStory, segment, type BuildContext, type StoryScene } from './engine'
 import { GARMENTS } from './garments'
@@ -43,7 +44,7 @@ export function createBenchmarkScene(canvas: HTMLCanvasElement, section: HTMLEle
       const side = point.dot(normal) > 0
       return { point, good: side, feature: i < 4 * FEATURES, row: Math.floor(i / FEATURES), k: i % FEATURES, value: PALETTE[Math.floor(rand() * PALETTE.length)]!, delay: rand() }
     })
-    const boundaryMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color('#f6f4f2'), transparent: true, opacity: 0, depthWrite: false })
+    const boundaryMaterial = new THREE.MeshBasicMaterial({ color: paintColor('#f6f4f2'), transparent: true, opacity: 0, depthWrite: false })
     const boundary = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 0.025), boundaryMaterial)
     boundary.position.set(0.25, 0, 0.05)
     group.add(boundary)

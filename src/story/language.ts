@@ -7,7 +7,7 @@ export const PHASE_STARTS = [0, 0.36, 0.66]
 
 const COUNT = 84
 const DATASETS = ['#05dbe9', '#a369ff', '#ffcc2a'].map(hexRgb)
-const HUMAN = hexRgb('#d5d3d1')
+const HUMAN = hexRgb('#ff4b4b')
 const MODEL = hexRgb('#b7ff54')
 const HUMAN_CENTER = new THREE.Vector3(-1.25, -0.1, 0)
 const MODEL_CENTER = new THREE.Vector3(1.35, -0.1, 0)
@@ -61,7 +61,7 @@ export function createLanguageScene(canvas: HTMLCanvasElement, section: HTMLElem
       }
     })
 
-    const humanRing = outline(circlePoints(1.25), '#d5d3d1')
+    const humanRing = outline(circlePoints(1.25), '#ff4b4b')
     humanRing.line.position.copy(HUMAN_CENTER)
     const modelRing = outline(circlePoints(1), '#b7ff54')
     modelRing.line.position.copy(MODEL_CENTER)
@@ -76,7 +76,7 @@ export function createLanguageScene(canvas: HTMLCanvasElement, section: HTMLElem
     }
     const datasets = [label('dataset A', '#05dbe9', -1.6, 2.15), label('dataset B', '#a369ff', 0, 2.15), label('dataset C', '#ffcc2a', 1.6, 2.15)]
     const embedding = label('text embeddings', '#f6f4f2', 0, 2.05)
-    const human = label('human answers: wide spread', '#d5d3d1', HUMAN_CENTER.x, 1.45)
+    const human = label('human answers: wide spread', '#ff4b4b', HUMAN_CENTER.x, 1.45)
     const model = label('model answers: homogenised', '#b7ff54', MODEL_CENTER.x, 1.45)
 
     const position = new THREE.Vector3()

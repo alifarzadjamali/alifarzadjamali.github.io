@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintCss } from './palette'
 
 /** Shared runtime for scroll-driven project scenes: renderer, layout fitting, scroll progress and render loop. */
 export const FOV = 35
@@ -27,7 +28,7 @@ export function fitToStage(camera: THREE.PerspectiveCamera, group: THREE.Object3
   camera.position.set(0, 0, distance)
   camera.updateProjectionMatrix()
   group.position.set((rect.left + stageW / 2 - box.left - box.width / 2) * perPixel, -(rect.top + stageH / 2 - box.top - height / 2) * perPixel, 0)
-  return { width: stageW * perPixel, height: stageH * perPixel }
+  return { width: stageW * perPixel, height: stageH * perPixel, perPixel }
 }
 
 export const clamp = (value: number) => Math.min(1, Math.max(0, value))
@@ -45,37 +46,62 @@ export function random(seed: number) {
   }
 }
 
+/**
+ * Text drawn on a canvas looks soft if the GPU has to shrink it (mipmaps blur it). Every text texture registers here
+ * and is redrawn at exactly its on-screen pixel size after each layout, with mipmaps off, so it stays sharp.
+ */
+type SharpText = { redraw: (devicePxPerWorld: number) => void }
+let collecting: SharpText[] | null = null
+export function sharpTexture(draw: (devicePxPerWorld: number | null) => HTMLCanvasElement) {
+  const texture = new THREE.CanvasTexture(draw(null))
+  texture.colorSpace = THREE.NoColorSpace
+  texture.generateMipmaps = false
+  texture.minFilter = THREE.LinearFilter
+  texture.magFilter = THREE.LinearFilter
+  collecting?.push({
+    redraw(scale) {
+      texture.image = draw(scale)
+      texture.dispose() // size changed: let three re-allocate the GPU texture
+      texture.needsUpdate = true
+    },
+  })
+  return texture
+}
+
 /** A text chip as a texture-mapped plane; height is in world units. */
 export function chip(text: string, background: string, height: number, options: { color?: string; strike?: string } = {}) {
-  const fontSize = 40
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')!
-  const font = `600 ${fontSize}px "JetBrains Mono Variable", ui-monospace, monospace`
-  ctx.font = font
-  const padX = fontSize * 0.55
-  canvas.width = Math.ceil(ctx.measureText(text).width + padX * 2)
-  canvas.height = Math.ceil(fontSize * 1.7)
-  ctx.font = font
-  ctx.fillStyle = background
-  ctx.beginPath()
-  ctx.roundRect(0, 0, canvas.width, canvas.height, fontSize * 0.32)
-  ctx.fill()
-  ctx.fillStyle = options.color ?? '#252423'
-  ctx.textBaseline = 'middle'
-  ctx.fillText(text, padX, canvas.height / 2 + 2)
-  if (options.strike) {
-    ctx.strokeStyle = options.strike
-    ctx.lineWidth = 5
+  const draw = (scale: number | null) => {
+    // canvas height = on-screen height in device pixels (or a sharp default before the first layout)
+    const fontSize = scale ? Math.min(200, Math.max(8, (height * scale) / 1.7)) : 88
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const font = `600 ${fontSize}px "JetBrains Mono Variable", ui-monospace, monospace`
+    ctx.font = font
+    const padX = fontSize * 0.55
+    canvas.width = Math.ceil(ctx.measureText(text).width + padX * 2)
+    canvas.height = Math.ceil(fontSize * 1.7)
+    ctx.font = font
+    ctx.fillStyle = paintCss(background)
     ctx.beginPath()
-    ctx.moveTo(padX * 0.6, canvas.height / 2 + 2)
-    ctx.lineTo(canvas.width - padX * 0.6, canvas.height / 2 + 2)
-    ctx.stroke()
+    ctx.roundRect(0, 0, canvas.width, canvas.height, fontSize * 0.32)
+    ctx.fill()
+    ctx.fillStyle = paintCss(options.color ?? '#252423')
+    ctx.textBaseline = 'middle'
+    ctx.fillText(text, padX, canvas.height / 2 + fontSize * 0.03)
+    if (options.strike) {
+      ctx.strokeStyle = paintCss(options.strike)
+      ctx.lineWidth = Math.max(1, fontSize * 0.12)
+      ctx.beginPath()
+      ctx.moveTo(padX * 0.6, canvas.height / 2)
+      ctx.lineTo(canvas.width - padX * 0.6, canvas.height / 2)
+      ctx.stroke()
+    }
+    return canvas
   }
-  const texture = new THREE.CanvasTexture(canvas)
-  texture.colorSpace = THREE.NoColorSpace
-  texture.anisotropy = 4
+  const texture = sharpTexture(draw)
+  const first = texture.image as HTMLCanvasElement
   const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0, depthWrite: false })
-  const width = (height * canvas.width) / canvas.height
+  const width = (height * first.width) / first.height
   const geometry = new THREE.PlaneGeometry(width, height)
   geometry.translate(width / 2, 0, 0)
   const mesh = new THREE.Mesh(geometry, material)
@@ -93,7 +119,10 @@ export function runStory(canvas: HTMLCanvasElement, section: HTMLElement, stage:
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200)
   const group = new THREE.Group()
   scene.add(group)
+  collecting = []
   const story = build({ scene, group, renderer })
+  const texts = collecting
+  collecting = null
 
   function resize() {
     const width = canvas.clientWidth
@@ -101,7 +130,10 @@ export function runStory(canvas: HTMLCanvasElement, section: HTMLElement, stage:
     if (!width || !height) return
     renderer.setSize(width, height, false)
     camera.aspect = width / height
-    fitToStage(camera, group, canvas, stage, story.extent)
+    const fit = fitToStage(camera, group, canvas, stage, story.extent)
+    // world units → device pixels at the text plane, so each label is drawn 1:1
+    const scale = renderer.getPixelRatio() / fit.perPixel
+    texts.forEach(text => text.redraw(scale))
   }
 
   let progress = 0

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { paintColor } from './palette'
 import { chip, mix, random, runStory, segment, type BuildContext, type StoryScene } from './engine'
 import { createTiles, hexRgb, lerpRgb, outline, rectPoints, scaleRgb, type Rgb } from './helpers'
 
@@ -40,7 +41,7 @@ export function createFabricScene(canvas: HTMLCanvasElement, section: HTMLElemen
     group.add(fabric)
 
     // Backing plane seen through the gaps of the weave.
-    const backing = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), new THREE.MeshBasicMaterial({ color: new THREE.Color('#10201f') }))
+    const backing = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), new THREE.MeshBasicMaterial({ color: paintColor('#10201f') }))
     backing.position.z = -0.02
     fabric.add(backing)
     disposers.push(() => { backing.geometry.dispose(); (backing.material as THREE.Material).dispose() })
