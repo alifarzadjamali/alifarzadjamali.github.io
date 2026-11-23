@@ -47,7 +47,8 @@ export function ProjectStories({ enabled, fallback }: { enabled: boolean; fallba
       const track = wrapper?.querySelector<HTMLElement>('.project-track')
       if (!wrapper || !track) return
       const slice = track.offsetHeight
-      const y = -wrapper.getBoundingClientRect().top
+      // --lead holds the first project still for a moment before its track starts
+      const y = -wrapper.getBoundingClientRect().top - track.offsetTop
       const index = Math.floor((y - (slice - window.innerHeight) - window.innerHeight / 2) / slice) + 1
       setActive(Math.min(content.projects.length - 1, Math.max(0, index)))
     }
@@ -75,6 +76,17 @@ function ProjectLayer({ project, index, active, onFail, wrapper }: { project: Pr
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const [phase, setPhase] = useState(0)
+  // Page switch (S3): name this layer's pills, kicker and title right before navigating, so the detail page's
+  // matching elements morph from them (cross-document view transition; see styles.css "Page switch").
+  const tagShared = () => {
+    document.querySelectorAll<HTMLElement>('[data-vt]').forEach(el => { el.style.viewTransitionName = ''; delete el.dataset.vt })
+    const layer = layerRef.current
+    if (!layer) return
+    for (const [selector, name] of [['.project-story-index', 'project-pills'], ['.project-story-meta', 'project-kicker'], ['h3', 'project-title']] as const) {
+      const el = layer.querySelector<HTMLElement>(selector)
+      if (el) { el.style.viewTransitionName = name; el.dataset.vt = '' }
+    }
+  }
   const slug = project.repository.split('/').pop()
 
   useEffect(() => {
@@ -107,7 +119,7 @@ function ProjectLayer({ project, index, active, onFail, wrapper }: { project: Pr
             {content.projects.map((item, itemIndex) => <a key={item.number} href={`#project-${item.number}`} aria-current={item.number === project.number ? 'true' : undefined} style={{ '--accent': ACCENTS[itemIndex % ACCENTS.length] } as CSSProperties} title={item.title}>{item.number}</a>)}
           </nav>
           <span className="project-story-meta">{project.number} / {project.category}</span>
-          <h3 id={`project-title-${project.number}`}><a href={`/projects/${slug}/`}>{project.title}</a></h3>
+          <h3 id={`project-title-${project.number}`}><a href={`/projects/${slug}/`} onClick={tagShared}>{project.title}</a></h3>
           <ol className="project-story-phases">
             {project.stages.map((stage, stageIndex) => (
               <li key={stage.label} className={stageIndex === phase ? 'is-active' : stageIndex < phase ? 'is-done' : undefined} aria-current={stageIndex === phase ? 'step' : undefined}>
@@ -117,8 +129,8 @@ function ProjectLayer({ project, index, active, onFail, wrapper }: { project: Pr
             ))}
           </ol>
           <div className="project-story-links">
-            <a className="text-link" href={`/projects/${slug}/`}>Read project details <span aria-hidden="true">→</span></a>
-            <a className="text-link" href={project.repository} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} repository (opens in a new tab)`}>Repository <span aria-hidden="true">↗</span></a>
+            <a className="text-link" href={`/projects/${slug}/`} onClick={tagShared}>Read project details</a>
+            <a className="text-link" href={project.repository} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} repository (opens in a new tab)`}>Repository</a>
           </div>
         </div>
         <div ref={stageRef} className="project-story-stage" aria-hidden="true" />
