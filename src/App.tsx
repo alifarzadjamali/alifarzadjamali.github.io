@@ -1,21 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { content, type Project } from './content'
 import { SiteFooter } from './SiteFooter'
 import { HeroGrid } from './HeroGrid'
-import { VisionSection } from './VisionSection'
+import { RecordSection } from './RecordSection'
+import { PixelLogo } from './PixelLogo'
+import { IntroTransition, useIntroEnabled } from './IntroTransition'
 import { ProjectStories, useStoriesEnabled } from './ProjectStory'
+import { navigation } from './navigation'
 
-const navigation = [
-  ['About', '#about'],
-  ['Projects', '#projects'],
-  ['Research', '#research'],
-  ['Experience', '#experience'],
-  ['Education', '#education'],
-  ['Teaching', '#teaching'],
-  ['Skills', '#skills'],
-  ['Contact', '#contact'],
-] as const
 
 const quickNavItems = [
   ...navigation.map(([label, href]) => ({
@@ -23,8 +16,7 @@ const quickNavItems = [
     href,
     searchText: [
       label,
-      ...(href === '#skills' ? content.skills.flatMap(group => [group.label, ...group.items]) : []),
-      ...(href === '#research' ? [content.research.heading, content.research.description] : []),
+      ...(href === '#research' ? [content.research.heading, content.research.description, 'work jobs degrees study'] : []),
       ...(href === '#contact' ? ['email', content.emailAddress] : []),
     ].join(' ').toLowerCase(),
   })),
@@ -36,11 +28,7 @@ const quickNavItems = [
   })),
 ]
 
-function Arrow({ diagonal = false }: { diagonal?: boolean }) {
-  return <span aria-hidden="true">{diagonal ? '↗' : '→'}</span>
-}
-
-function SectionHeading({ id, number, eyebrow, title, description }: { id: string; number: string; eyebrow: string; title: string; description?: string }) {
+function SectionHeading({ id, number, eyebrow, title, description }: { id: string; number: string; eyebrow: string; title: ReactNode; description?: ReactNode }) {
   const reducedMotion = useReducedMotion()
   return (
     <motion.div className="section-heading" initial={reducedMotion ? false : { opacity: 0, y: 18 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.45 }} transition={{ duration: 0.45 }}>
@@ -69,8 +57,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <p className="project-detail">{project.detail}</p><p className="project-detail">{project.results}</p>
         <div className="project-stages" aria-label={`${project.title} workflow`}><div className="stage-buttons">{project.stages.map((stage, stageNumber) => <button key={stage.label} type="button" aria-pressed={stageIndex === stageNumber} aria-controls={`stage-description-${project.number}`} onClick={() => setStageIndex(stageNumber)} onKeyDown={event => { let next: number; if (event.key === 'Home') next = 0; else if (event.key === 'End') next = project.stages.length - 1; else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = (stageNumber + (event.key === 'ArrowRight' ? 1 : -1) + project.stages.length) % project.stages.length; else return; event.preventDefault(); setStageIndex(next); event.currentTarget.parentElement?.querySelectorAll('button')[next]?.focus() }}>{stageNumber + 1}. {stage.label}</button>)}</div><div className="stage-progress" aria-hidden="true"><span style={{ width: `${((stageIndex + 1) / project.stages.length) * 100}%` }} /></div><p id={`stage-description-${project.number}`} role="status">{project.stages[stageIndex]?.description}</p></div>
         <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
-        <a className="text-link project-details-link" href={`/projects/${project.repository.split('/').pop()}/`}>Read project details <Arrow /></a><a className="text-link" href={project.repository} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} repository (opens in a new tab)`}>View repository <Arrow diagonal /></a>
-        <button className="project-copy" type="button" onClick={async () => { try { await navigator.clipboard.writeText(`https://alifarzadjamali.github.io/projects/${project.repository.split('/').pop()}/`); setLinkStatus('Project link copied') } catch { setLinkStatus('Copy unavailable') } }}>Copy project link <span aria-hidden="true">↗</span></button><span className="inline-status" role="status">{linkStatus}</span>
+        <a className="text-link project-details-link" href={`/projects/${project.repository.split('/').pop()}/`}>Read project details</a><a className="text-link" href={project.repository} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} repository (opens in a new tab)`}>View repository</a>
+        <button className="project-copy" type="button" onClick={async () => { try { await navigator.clipboard.writeText(`https://alifarzadjamali.github.io/projects/${project.repository.split('/').pop()}/`); setLinkStatus('Project link copied') } catch { setLinkStatus('Copy unavailable') } }}>Copy project link</button><span className="inline-status" role="status">{linkStatus}</span>
       </div>
     </motion.article>
   )
@@ -82,13 +70,15 @@ function App() {
   const [year, setYear] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
   const [focusPaused, setFocusPaused] = useState(false)
+  const [asideHover, setAsideHover] = useState(false)
   const storiesEnabled = useStoriesEnabled()
+  const introEnabled = useIntroEnabled()
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [contactTopic, setContactTopic] = useState('AI collaboration')
   const [shareStatus, setShareStatus] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('')
+  const [activeSections, setActiveSections] = useState<string[]>([])
   const [copyStatus, setCopyStatus] = useState('')
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const searchReturnFocusRef = useRef<HTMLElement | null>(null)
@@ -135,12 +125,12 @@ function App() {
   }, [searchOpen])
 
   useEffect(() => {
-    if (reducedMotion || focusPaused) return
+    if (reducedMotion || focusPaused || asideHover) return
     const timer = window.setInterval(() => {
       if (!document.hidden) setFocusIndex(index => (index + 1) % content.focus.length)
     }, 3600)
     return () => window.clearInterval(timer)
-  }, [reducedMotion, focusPaused])
+  }, [reducedMotion, focusPaused, asideHover])
 
   useEffect(() => {
     const updateTime = () => setLocalTime(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()))
@@ -203,17 +193,32 @@ function App() {
     }
   }, [menuOpen])
 
+  // Active nav item(s) from scroll position. Each link's target is the exact scroll position its anchor jumps to
+  // (anchor top − scroll-padding − scroll-margin), so the highlight and the click always agree, including inside the
+  // pinned scenes. Research, Experience and Education share one screen, so they light up together.
   useEffect(() => {
-    const sections = navigation
-      .map(([, href]) => document.querySelector<HTMLElement>(href))
-      .filter((section): section is HTMLElement => section !== null)
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-      if (document.getElementById('about')!.getBoundingClientRect().top >= window.innerHeight) setActiveSection('')
-      else if (visible[0]) setActiveSection(`#${visible[0].target.id}`)
-    }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] })
-    sections.forEach(section => observer.observe(section))
-    return () => observer.disconnect()
+    let frame = 0
+    const padding = () => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0
+    const update = () => {
+      frame = 0
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const targets = navigation.flatMap(([, href]) => {
+        const el = document.querySelector<HTMLElement>(href)
+        if (!el) return []
+        const top = el.getBoundingClientRect().top + window.scrollY - padding() - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0)
+        return [{ href, top: Math.min(max, Math.max(0, top)) }]
+      })
+      const probe = window.scrollY + window.innerHeight * 0.4
+      const reached = targets.filter(target => target.top <= probe)
+      const last = reached.length ? Math.max(...reached.map(target => target.top)) : -1
+      const next = last < 0 ? [] : reached.filter(target => Math.abs(target.top - last) < 4).map(target => target.href)
+      setActiveSections(current => (current.join() === next.join() ? current : next))
+    }
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule) }
   }, [])
 
   return (
@@ -222,72 +227,53 @@ function App() {
       <header className="site-header">
         <div className="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(scrollProgress)} style={{ width: `${scrollProgress}%` }} />
         <div className="container header-inner">
-          <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><span className="wordmark-icon">F</span><span>FARZAD JAMALI</span></a>
+          <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><PixelLogo className="wordmark-icon" /><span className="wordmark-text">ARZAD JAMALI</span></a>
           <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
           <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
-            <button className="mobile-search" type="button" onClick={openSearch}>Search sections and projects <Arrow /></button>
-            {navigation.map(([label, href]) => <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>)}
-            <a className="nav-cv" href={content.cv.href} download onClick={() => setMenuOpen(false)}>CV <Arrow diagonal /></a>
+            <button className="mobile-search" type="button" onClick={openSearch}>Search sections and projects</button>
+            {navigation.map(([label, href]) => <a key={href} href={href} aria-current={activeSections.includes(href) ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>)}
+            <a className="nav-cv" href={content.cv.href} download onClick={() => setMenuOpen(false)}>CV</a>
           </nav>
         </div>
       </header>
 
-      <main id="main" tabIndex={-1}>
-        <section className="hero" id="top" aria-labelledby="hero-title" onPointerMove={event => { if (reducedMotion || event.pointerType === 'touch') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`) }}>
+      <main id="main" tabIndex={-1} className={[introEnabled && storiesEnabled ? 'intro-joined' : '', storiesEnabled ? 'stories-on' : ''].filter(Boolean).join(' ') || undefined}>
+        <IntroTransition enabled={introEnabled} hero={<section className="hero" id={introEnabled ? undefined : 'top'} aria-labelledby="hero-title" onPointerMove={event => { if (reducedMotion || event.pointerType === 'touch') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`) }}>
           <div className="container hero-content">
-            <HeroGrid />
+            <HeroGrid onHover={setAsideHover} />
             <motion.div className="hero-copy">
               <p className="eyebrow"><span className="status-dot" /> AI / COMPUTER VISION / RESEARCH</p>
-              <h1 id="hero-title" className="hero-name">{content.name}</h1><div className="hero-headline">Building AI<br /><span>with clarity.</span></div>
+              <h1 id="hero-title" className="hero-headline"><span className="sr-only">{content.name}: </span>Building AI<br /><span className="hero-accent">with clarity.</span></h1>
               <p className="hero-role">{content.role}</p>
               <div className="hero-focus-control" onFocusCapture={() => setFocusPaused(true)}><p className="hero-focus" aria-live="off"><span>FOCUS / 0{focusIndex + 1}</span><AnimatePresence mode="wait" initial={false}><motion.span className="hero-focus-value" key={focusIndex} initial={false} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -7 }} transition={{ duration: 0.2 }}>{content.focus[focusIndex]?.label}</motion.span></AnimatePresence></p>{!reducedMotion && <button className="focus-pause" type="button" aria-label={focusPaused ? 'Play focus rotation' : 'Pause focus rotation'} aria-pressed={focusPaused} onClick={() => setFocusPaused(paused => !paused)}>{focusPaused ? '▶' : 'Ⅱ'}</button>}</div>
               <div className="focus-selectors" role="group" aria-label="Choose a focus area">{content.focus.map((focus, index) => <button key={focus.label} type="button" className={focusIndex === index ? 'is-active' : ''} aria-label={`Show ${focus.label}`} aria-pressed={focusIndex === index} onClick={() => { setFocusIndex(index); setFocusPaused(true) }} />)}</div>
               <p className="hero-intro">{content.intro}</p>
-              <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects <Arrow /></a><a className="button button-outline" href="#contact">Get in touch <Arrow diagonal /></a><button className="button button-share" type="button" onClick={async () => { setShareStatus(''); try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }); setShareStatus('Portfolio shared') } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') return; setShareStatus('Sharing unavailable') } }}>Share ↗</button></div><span className="inline-status" role="status">{shareStatus}</span>
+              <div className="hero-actions"><a className="button button-primary" href="#projects">Explore projects</a><a className="button button-outline" href="#contact">Get in touch</a><button className="button button-share" type="button" onClick={async () => { setShareStatus(''); try { if (navigator.share) { await navigator.share({ title: document.title, url: window.location.href }); setShareStatus('Portfolio shared') } else { await navigator.clipboard.writeText(window.location.href); setShareStatus('Portfolio link copied') } } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') return; setShareStatus('Sharing unavailable') } }}>Share</button></div><span className="inline-status" role="status">{shareStatus}</span>
             </motion.div>
-            <div className="hero-aside" aria-label="Portfolio focus areas">
-              <div className="hero-aside-top"><span>01 / {String(content.focus.length).padStart(2, '0')}</span><span>AREAS OF FOCUS</span></div>
-              {content.focus.map((item, index) => <a className="focus-row" href={item.href} key={item.label}><span>0{index + 1}</span><strong>{item.label}</strong><Arrow diagonal /></a>)}
+            <div className="hero-aside">
               <div className="hero-aside-bottom"><span>BASED IN {content.location.toUpperCase()}{localTime && <span className="local-time"> · {localTime} LOCAL</span>}</span><span className="signal">● AVAILABLE FOR CONVERSATION</span></div>
             </div>
           </div>
-          <div className="container hero-bottom"><a className="hero-scroll-link" href="#vision">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><span>PORTFOLIO / {year}</span></div>
-        </section>
+          <div className="container hero-bottom"><a className="hero-scroll-link" href="#about">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a></div>
+        </section>} about={<section className="section about-section" id={introEnabled ? 'about-panel' : 'about'} aria-labelledby="about-title">
+          <div className="container about-grid"><SectionHeading id="about-title" number="01" eyebrow="ABOUT" title={<><span className="nowrap">Built machines.</span> Now I teach them.</>} description={<>Started in <span className="name-accent">mechanical engineering</span>, ended up in neural networks.</>} /><div className="about-copy">{content.about.map(paragraph => { const [before, after] = paragraph.split('calls me Farzad'); return <p key={paragraph}>{after === undefined ? paragraph : <>{before}calls me <span className="name-accent">Farzad</span>{after}</>}</p> })}</div></div>
+        <div className="container about-next"><a className="hero-scroll-link" href="#projects">LET'S HAVE A LOOK AT THE PROJECTS <span aria-hidden="true">↓</span></a></div></section>} />
 
-        <VisionSection />
-
-        <section className="section about-section" id="about" aria-labelledby="about-title">
-          <div className="container about-grid"><SectionHeading id="about-title" number="01" eyebrow="ABOUT" title="A practical mind for complex systems." /><div className="about-copy">{content.about.map(paragraph => <p key={paragraph}>{paragraph}</p>)}<div className="about-foot"><span className="small-square" /><span>Research-informed thinking. Engineering-led execution.</span></div></div></div>
-        </section>
-
-        <section className="section projects-section" id="projects" aria-labelledby="projects-title">
+        <section className="section projects-section" aria-labelledby="projects-title">
+          {/* jump target: with the intro joined it sits just past the hand-off, where project 01 is fully revealed */}
+          <span className="projects-anchor" id="projects" />
           <div className="container"><SectionHeading id="projects-title" number="02" eyebrow="FEATURED PROJECTS" title="Selected work." description="A closer look at systems, methods, and the boundaries of what each project can claim." /><nav className="project-index" aria-label="Project index">{content.projects.map(project => <a key={project.number} href={`#project-${project.number}`}><span>{project.number}</span>{project.title}</a>)}</nav><ProjectStories enabled={storiesEnabled} fallback={<div className="project-list">{content.projects.map((project, index) => <div key={project.number}><ProjectCard project={project} index={index} /></div>)}</div>} /></div>
         </section>
 
-        <section className="section research-section" id="research" aria-labelledby="research-title">
-          <div className="container research-grid"><SectionHeading id="research-title" number="03" eyebrow="RESEARCH" title="Questions worth testing." /><div className="research-content"><span className="mini-label">CURRENT FOCUS</span><h3>{content.research.heading}</h3><p>{content.research.description}</p><h3>Publications</h3><ul className="publications"><li><a href="https://doi.org/10.52547/mme.23.2.127">Experimental evaluation of the open-loop control method for a dual-axis solar tracker</a>. <i>Modares Mechanical Engineering</i>, 2023. DOI: 10.52547/mme.23.2.127.</li><li><a href="/projects/fashion-compatibility-benchmark/">RepBench-Fashion</a> — research paper in preparation.</li><li><a href="/projects/LLM-output-homogenization/">LLM Output Homogenization</a> — manuscript in preparation.</li></ul><div className="note-line"><a href={content.links.googleScholar} target="_blank" rel="me noopener noreferrer">{content.research.note}</a></div></div></div>
-        </section>
+        <RecordSection stories={storiesEnabled} finale={inStage => <>
+          <section className="section cv-section" id={inStage ? undefined : 'cv'} aria-labelledby="cv-title"><div className="container cv-panel"><div><span className="mini-label">CURRICULUM VITAE</span><h2 id="cv-title">A concise record of the work.</h2><p>{content.cv.note}</p></div><a className="button button-primary" href={content.cv.href} download>{content.cv.label}</a></div></section>
+          <section className="section contact-section" id={inStage ? undefined : 'contact'} aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="08" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>{content.emailAddress}</a><div className="contact-topic"><label htmlFor="contact-topic">Start with a topic</label><select id="contact-topic" value={contactTopic} onChange={event => setContactTopic(event.target.value)}><option>AI collaboration</option><option>Computer vision project</option><option>Research conversation</option><option>Something else</option></select><a href={`${content.links.email}?subject=${encodeURIComponent(contactTopic)}`}>Compose email</a></div><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(content.emailAddress); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="me noopener noreferrer">GitHub</a><a href={content.links.linkedin} target="_blank" rel="me noopener noreferrer">LinkedIn</a><a href={content.links.googleScholar} target="_blank" rel="me noopener noreferrer">Google Scholar</a><a href={content.links.orcid} target="_blank" rel="me noopener noreferrer">ORCID</a><a href="/farzad-jamali.vcf" download>Save contact</a><span className="location">{content.location}</span></div></div></section>
+          {inStage && <SiteFooter year={year} />}
+        </>} />
 
-        <section className="section experience-section" id="experience" aria-labelledby="experience-title">
-          <div className="container"><SectionHeading id="experience-title" number="04" eyebrow="EXPERIENCE" title="Work in practice." /><div className="timeline">{content.experience.map(item => <div className="timeline-item" key={item.organization}><div><span className="timeline-dot" /><span className="mini-label">{item.organization}</span></div><div><h3>{item.title}</h3><p>{item.description}</p></div></div>)}</div></div>
-        </section>
-
-        <section className="section education-section" id="education" aria-labelledby="education-title"><div className="container"><SectionHeading id="education-title" number="05" eyebrow="EDUCATION" title="Learning and research." /><div className="timeline">{content.education.map(item => <div className="timeline-item" key={item.title}><div><span className="timeline-dot" /><span className="mini-label">{item.dates}</span></div><div><h3>{item.title}</h3><p>{item.organization}</p></div></div>)}</div></div></section>
-
-        <section className="section teaching-section" id="teaching" aria-labelledby="teaching-title">
-          <div className="container teaching-grid"><SectionHeading id="teaching-title" number="06" eyebrow="TEACHING" title="Sharing the process." /><div className="teaching-card"><span className="mini-label">{content.teaching.organization} · Sep 2026–Present</span><h3>{content.teaching.title}</h3><p>{content.teaching.description}</p><span className="teaching-symbol" aria-hidden="true">↗</span></div></div>
-        </section>
-
-        <section className="section skills-section" id="skills" aria-labelledby="skills-title">
-          <div className="container"><SectionHeading id="skills-title" number="07" eyebrow="TECHNICAL SKILLS" title="Tools, methods, judgement." /><div className="skills-grid">{content.skills.map((group, index) => <div className="skill-group" key={group.label}><span className="skill-number">0{index + 1}</span><h3>{group.label}</h3><ul>{group.items.map(item => <li key={item}>{item}</li>)}</ul></div>)}</div></div>
-        </section>
-
-        <section className="section cv-section" id="cv" aria-labelledby="cv-title"><div className="container cv-panel"><div><span className="mini-label">CURRICULUM VITAE</span><h2 id="cv-title">A concise record of the work.</h2><p>{content.cv.note}</p></div><a className="button button-primary" href={content.cv.href} download>{content.cv.label} <Arrow diagonal /></a></div></section>
-
-        <section className="section contact-section" id="contact" aria-labelledby="contact-title"><div className="container contact-grid"><div><SectionHeading id="contact-title" number="08" eyebrow="CONTACT" title="Let’s make something useful." /><p className="contact-intro">Interested in applied AI, computer vision, or research collaboration? Reach out directly.</p><a className="contact-email" href={content.links.email}>{content.emailAddress} <Arrow diagonal /></a><div className="contact-topic"><label htmlFor="contact-topic">Start with a topic</label><select id="contact-topic" value={contactTopic} onChange={event => setContactTopic(event.target.value)}><option>AI collaboration</option><option>Computer vision project</option><option>Research conversation</option><option>Something else</option></select><a href={`${content.links.email}?subject=${encodeURIComponent(contactTopic)}`}>Compose email <Arrow diagonal /></a></div><div className="copy-email-row"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(content.emailAddress); setCopyStatus('Email address copied.') } catch { setCopyStatus('Copy unavailable. Use the email link above.') } }}>Copy email address</button><span role="status" aria-live="polite">{copyStatus}</span></div></div><div className="contact-links"><span className="mini-label">FIND ME ELSEWHERE</span><a href={content.links.github} target="_blank" rel="me noopener noreferrer">GitHub <Arrow diagonal /></a><a href={content.links.linkedin} target="_blank" rel="me noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href={content.links.googleScholar} target="_blank" rel="me noopener noreferrer">Google Scholar <Arrow diagonal /></a><a href={content.links.orcid} target="_blank" rel="me noopener noreferrer">ORCID <Arrow diagonal /></a><a href="/farzad-jamali.vcf" download>Save contact <Arrow diagonal /></a><span className="location">{content.location}</span></div></div></section>
       </main>
-      <nav className={`section-rail ${scrollProgress > 5 ? 'is-visible' : ''}`} aria-label="Page sections" inert={scrollProgress <= 5}>{navigation.map(([label, href]) => <a key={href} href={href} aria-label={label} aria-current={activeSection === href ? 'location' : undefined} title={label}><span /></a>)}</nav>
-       {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>('.quick-nav-results a')); if (!links.length) return; event.preventDefault(); const index = links.indexOf(document.activeElement as HTMLAnchorElement); links[index < 0 ? (event.key === 'ArrowDown' ? 0 : links.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length]?.focus(); return } if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.closest('.quick-nav')?.querySelector<HTMLAnchorElement>('.quick-nav-results a')?.click() } }} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><p className="quick-nav-count" role="status">{matchingQuickNavItems.length} {matchingQuickNavItems.length === 1 ? 'result' : 'results'}</p><div className="quick-nav-results">{matchingQuickNavItems.map(item => <a key={item.href} href={item.href} onClick={() => { setSearchOpen(false); setSearchQuery('') }}>{item.label}<Arrow /></a>)}{matchingQuickNavItems.length === 0 && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
+      <nav className={`section-rail ${scrollProgress > 5 ? 'is-visible' : ''}`} aria-label="Page sections" inert={scrollProgress <= 5}>{navigation.map(([label, href]) => <a key={href} href={href} aria-label={label} aria-current={activeSections.includes(href) ? 'location' : undefined} title={label}><span /></a>)}</nav>
+       {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>('.quick-nav-results a')); if (!links.length) return; event.preventDefault(); const index = links.indexOf(document.activeElement as HTMLAnchorElement); links[index < 0 ? (event.key === 'ArrowDown' ? 0 : links.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length]?.focus(); return } if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.closest('.quick-nav')?.querySelector<HTMLAnchorElement>('.quick-nav-results a')?.click() } }} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><p className="quick-nav-count" role="status">{matchingQuickNavItems.length} {matchingQuickNavItems.length === 1 ? 'result' : 'results'}</p><div className="quick-nav-results">{matchingQuickNavItems.map(item => <a key={item.href} href={item.href} onClick={() => { setSearchOpen(false); setSearchQuery('') }}>{item.label}</a>)}{matchingQuickNavItems.length === 0 && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
        <a className={`back-to-top ${scrollProgress > 18 ? 'is-visible' : ''}`} href="#top" aria-label="Back to top" aria-hidden={scrollProgress <= 18} tabIndex={scrollProgress > 18 ? 0 : -1}>↑</a>
       <SiteFooter year={year} />
     </div>

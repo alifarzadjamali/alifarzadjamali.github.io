@@ -13,6 +13,8 @@ export type Project = {
   repository: string
   visual: 'fashion' | 'floorplan' | 'fabric' | 'benchmark' | 'language'
   stages: { label: string; description: string }[]
+  /** Headline number for the detail page, taken verbatim from `results`. */
+  metric?: { value: string; label: string }
 }
 
 export type PortfolioContent = {
@@ -25,7 +27,8 @@ export type PortfolioContent = {
   about: string[]
   focus: { label: string; href: string }[]
   projects: Project[]
-  research: { heading: string; description: string; note: string }
+  research: { heading: string; description: string; note: string; items: { tag: string; title: string; meta: string; tone: 'red' | 'cyan' | 'plain'; href?: string }[] }
+  record: Record<'years' | 'members' | 'students' | 'degrees' | 'countries', { value: string; label: string; title?: string }>
   experience: { title: string; organization: string; description: string }[]
   education: { title: string; organization: string; dates: string }[]
   teaching: { title: string; organization: string; description: string }
@@ -42,15 +45,15 @@ export const content: PortfolioContent = {
   shortName: 'Farzad Jamali',
   role: 'AI & Computer Vision Engineer',
   location: 'Manchester, UK',
-  intro: 'I build practical AI systems that connect visual understanding, multimodal retrieval, and evidence you can inspect.',
+  intro: 'I design AI that sees, reads and explains itself: systems tested on real data, honest about their limits, and built to be trusted.',
   about: [
-    "I'm Ali Jamali, but everyone calls me Farzad, so you'll often see me as Farzad Jamali. I work across computer vision, recommendation, document intelligence, and grounded AI. My projects move from data and models through evaluation and usable review tools.",
-    'I am an MPhil researcher in Computer Science & Artificial Intelligence at the University of Salford and hold an MPhil. My earlier background in mechanical engineering informs how I approach real-world systems.',
+    "I'm Ali, but everyone calls me Farzad, so you'll often see me as Farzad Jamali. I work across applied computer vision, conversational AI and trustworthy AI systems. My projects move from data and models, through evaluation, to scalable commercial use.",
+    "I'm also an MPhil researcher in Computer Science & Artificial Intelligence at the University of Salford, working on research that helps people use AI more effectively and with more trust.",
   ],
   focus: [
-    { label: 'Computer vision', href: '#project-02' },
-    { label: 'Multimodal retrieval', href: '#project-01' },
-    { label: 'Evidence-grounded AI', href: '#research' },
+    { label: 'Computer Vision', href: '#project-03' },
+    { label: 'LLM & NLP', href: '#project-05' },
+    { label: 'Responsible AI', href: '#research' },
   ],
   projects: [
     {
@@ -64,6 +67,7 @@ export const content: PortfolioContent = {
       tags: ['CLIP', 'Retrieval', 'Reranking', 'Grounded explanations'],
       repository: 'https://github.com/alifarzadjamali/evidence-based-fashion-recommender',
       visual: 'fashion',
+      metric: { value: '+21 pp', label: 'trace-supported claims when the exact rule trace is supplied (1,000 test cases)' },
       stages: [
         { label: 'Retrieve', description: 'Match product images and text with multimodal embeddings.' },
         { label: 'Rerank', description: 'Apply source-linked styling rules to the candidate set.' },
@@ -82,6 +86,7 @@ export const content: PortfolioContent = {
       tags: ['SegFormer', 'OCR', 'Geometry', 'Evaluation'],
       repository: 'https://github.com/alifarzadjamali/floor-plan-document-intelligence',
       visual: 'floorplan',
+      metric: { value: '0.577', label: 'five-class mIoU on held-out data, up from 0.312 for the classical baseline' },
       stages: [
         { label: 'Segment', description: 'Predict five classes from a raster floor plan.' },
         { label: 'Read', description: 'Extract text tokens with OCR and conservative spatial links.' },
@@ -96,6 +101,7 @@ export const content: PortfolioContent = {
       limitations: 'The system remains a research prototype, with missed defects and false alarms.',
       image: '/projects/industrial-fabric-defect-inspection/result.webp', imageWidth: 2200, imageHeight: 753,
       tags: ['U-Net', 'ResNet-18', 'Segmentation', 'AITEX'], repository: 'https://github.com/alifarzadjamali/industrial-fabric-defect-inspection', visual: 'fabric',
+      metric: { value: '0.532', label: 'Dice on a locked holdout, up from 0.259; image-level ROC-AUC 0.878' },
       stages: [
         { label: 'Prepare', description: 'Split source images and prepare fabric crops and masks.' },
         { label: 'Inspect', description: 'Predict pixel-level defect probabilities with a U-Net.' },
@@ -109,6 +115,7 @@ export const content: PortfolioContent = {
       results: 'On Polyvore, contrastive vision-language models reached approximately 0.89 ROC-AUC compared with 0.69 for ResNet50.',
       limitations: 'Fashion-specialised models were not consistently better; checkpoint comparisons do not isolate training data, architecture, or loss.',
       tags: ['CLIP', 'Representation learning', 'PCA', 'Evaluation'], repository: 'https://github.com/alifarzadjamali/fashion-compatibility-benchmark', visual: 'benchmark',
+      metric: { value: '0.89', label: 'ROC-AUC for contrastive vision-language models on Polyvore, vs 0.69 for ResNet50' },
       stages: [
         { label: 'Extract', description: 'Extract features from frozen image representations.' },
         { label: 'Train', description: 'Fit preprocessing and a classifier using training data.' },
@@ -133,6 +140,20 @@ export const content: PortfolioContent = {
     heading: 'Multimodal recommendation & grounded explanations',
     description: 'My MPhil research focuses on multimodal recommendation and grounded AI explanations. The public fashion recommender repository shows the applied pipeline: retrieval, rule evidence, explanation generation, and support checks.',
     note: 'Full list on Google Scholar',
+    items: [
+      { tag: 'MPhil thesis', title: 'Evidence-constrained multimodal fashion recommendation', meta: 'University of Salford · a recommender that explains its choices and checks them against a knowledge base', tone: 'red' },
+      { tag: 'Published', title: 'Experimental evaluation of the open-loop control method for a dual-axis solar tracker', meta: 'Modares Mechanical Engineering · 23(02) · 2023', tone: 'cyan', href: 'https://doi.org/10.52547/mme.23.2.127' },
+      // TODO: real titles for the two papers in progress
+      { tag: 'In progress', title: 'Fashion compatibility benchmark: frozen visual representations', meta: 'Paper in preparation', tone: 'plain' },
+      { tag: 'In progress', title: 'LLM output homogenization across datasets', meta: 'Paper in preparation', tone: 'plain' },
+    ],
+  },
+  record: {
+    years: { value: '10+', label: 'years across engineering, data and AI' },
+    members: { value: '4M+', label: 'members served by the recommendation platform I built' },
+    students: { value: '80+', title: 'Sharing the process.', label: 'Students taught in Deep Learning workshops as an Hourly Paid Academic, University of Salford' },
+    degrees: { value: '3', title: 'Degrees', label: 'BSc · MSc · MPhil' },
+    countries: { value: '2', title: 'Countries', label: 'Iran · UK' },
   },
   experience: [
     { title: 'Recommendation & Analytics Platform', organization: 'World Privilege Plus · 2025–2026', description: 'Independently built a deep learning based, semantic-aware recommendation and analytics platform for a rewards business with over 4 million members. Used Python and FastAPI for data processing, model training and real-time predictions, with DuckDB and Parquet for analytics.' },
