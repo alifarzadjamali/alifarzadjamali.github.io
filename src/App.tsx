@@ -118,7 +118,7 @@ function App() {
 
   useEffect(() => {
     if (!searchOpen) return
-    const background = Array.from(document.querySelectorAll<HTMLElement>('.site-header, main, .section-rail, .back-to-top, .site-footer'))
+    const background = Array.from(document.querySelectorAll<HTMLElement>('.site-header, main, .section-rail, .site-footer'))
     const previous = background.map(element => element.inert)
     background.forEach(element => { element.inert = true })
     return () => background.forEach((element, index) => { element.inert = previous[index] ?? false })
@@ -274,7 +274,6 @@ function App() {
       </main>
       <nav className={`section-rail ${scrollProgress > 5 ? 'is-visible' : ''}`} aria-label="Page sections" inert={scrollProgress <= 5}>{navigation.map(([label, href]) => <a key={href} href={href} aria-label={label} aria-current={activeSections.includes(href) ? 'location' : undefined} title={label}><span /></a>)}</nav>
        {searchOpen && <div className="quick-nav-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) closeSearch() }}><div className="quick-nav" role="dialog" aria-modal="true" aria-label="Quick navigation" onKeyDown={event => { if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>('.quick-nav-results a')); if (!links.length) return; event.preventDefault(); const index = links.indexOf(document.activeElement as HTMLAnchorElement); links[index < 0 ? (event.key === 'ArrowDown' ? 0 : links.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length]?.focus(); return } if (event.key !== 'Tab') return; const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a')); const first = items[0]; const last = items[items.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() } }}><div className="quick-nav-input"><input autoFocus aria-label="Find a section or project" placeholder="Find a section or project…" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.closest('.quick-nav')?.querySelector<HTMLAnchorElement>('.quick-nav-results a')?.click() } }} /><button type="button" onClick={closeSearch} aria-label="Close quick navigation">Esc</button></div><p className="quick-nav-count" role="status">{matchingQuickNavItems.length} {matchingQuickNavItems.length === 1 ? 'result' : 'results'}</p><div className="quick-nav-results">{matchingQuickNavItems.map(item => <a key={item.href} href={item.href} onClick={() => { setSearchOpen(false); setSearchQuery('') }}>{item.label}</a>)}{matchingQuickNavItems.length === 0 && <p className="quick-nav-empty">No matching sections or projects.</p>}</div></div></div>}
-       <a className={`back-to-top ${scrollProgress > 18 ? 'is-visible' : ''}`} href="#top" aria-label="Back to top" aria-hidden={scrollProgress <= 18} tabIndex={scrollProgress > 18 ? 0 : -1}>↑</a>
       <SiteFooter year={year} />
     </div>
   )

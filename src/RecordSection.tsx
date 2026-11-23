@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { content } from './content'
-import { createTokenShuffle } from './record/tokenShuffle'
+import { SHUFFLE_VH, createTokenShuffle } from './record/tokenShuffle'
 
 const ROOMY = '(min-width: 1001px) and (min-height: 700px)'
 /** Scroll lengths after the bento is fully revealed (vh): reading hold, then the bento → CV/Contact transition. */
 const HOLD = 40
-const MORPH = 200
+const MORPH = SHUFFLE_VH
 
 const clamp = (v: number) => Math.min(1, Math.max(0, v))
 

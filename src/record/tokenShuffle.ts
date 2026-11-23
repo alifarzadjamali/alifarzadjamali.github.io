@@ -14,6 +14,12 @@ const CYAN = '#05dbe9'
 const DIM = 'rgba(97,94,91,.5)'
 /** Tokens may drift this far (px) outside the content window, so its edge looks organic instead of ruled. */
 const SPILL = 48
+/**
+ * Timeline in vh of scroll (must match MORPH in RecordSection.tsx): rows tokenize 6–52, tokens fly out 48–88,
+ * mix, fly home 88–130, rows decode 130–170. The mixing middle is ~30vh (≈0.5 s) shorter than before.
+ */
+export const SHUFFLE_VH = 170
+const at = (vh: number) => vh / SHUFFLE_VH
 
 const clamp = (v: number) => Math.min(1, Math.max(0, v))
 const smooth = (a: number, b: number, v: number) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t) }
@@ -125,8 +131,8 @@ export function createTokenShuffle(stage: HTMLElement, layer: HTMLElement, final
       return
     }
     if (!src || !dst) capture()
-    const enc = (r: number) => smooth(0.03 + (r / rows) * 0.18, 0.08 + (r / rows) * 0.18, p)
-    const dec = (r: number) => smooth(0.8 + (r / rows) * 0.14, 0.86 + (r / rows) * 0.14, p)
+    const enc = (r: number) => smooth(at(6 + (r / rows) * 36), at(16 + (r / rows) * 36), p)
+    const dec = (r: number) => smooth(at(130 + (r / rows) * 28), at(142 + (r / rows) * 28), p)
     let encoded = 0, decoded = 0
     while (encoded < rows && enc(encoded) > 0) encoded++
     while (decoded < rows && dec(decoded) >= 1) decoded++
@@ -141,10 +147,10 @@ export function createTokenShuffle(stage: HTMLElement, layer: HTMLElement, final
     ctx.fillRect(0, decY, width, Math.max(0, Math.min(encY, height) - decY))
     ctx.font = '700 14px "JetBrains Mono Variable", ui-monospace, monospace'
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-    const thinking = p > 0.38 && p < 0.62
+    const thinking = p > at(70) && p < at(108)
     for (let r = decoded; r < encoded; r++) for (let c = 0; c < cols; c++) {
-      const i = r * cols + c, d = rand[i]! * 0.08
-      const out = smooth(0.24 + d, 0.44 + d, p), back = smooth(0.52 + d, 0.74 + d, p), k = out * (1 - back)
+      const i = r * cols + c, d = at(rand[i]! * 12)
+      const out = smooth(at(48) + d, at(76) + d, p), back = smooth(at(88) + d, at(118) + d, p), k = out * (1 - back)
       const x0 = fold(c * CW + CW / 2 + moveX[i]! * k, width), y0 = fold(r * CH + CH / 2 + moveY[i]! * k, height) - Math.sin(Math.PI * k) * 20
       // near the edges, drift outward a little (always a bit, fully while mixing) so the outline is organic, not ruled
       const nx = (x0 / width) * 2 - 1, ny = (y0 / height) * 2 - 1, edge = Math.max(Math.abs(nx), Math.abs(ny)) ** 4, drift = 0.3 + 0.7 * k
