@@ -96,7 +96,7 @@ export function createTokenShuffle(stage: HTMLElement, layer: HTMLElement, final
   let srcBoxes: Box[] = [], dstBoxes: Box[] = []
   let rand = new Float32Array(0), r2 = new Float32Array(0), r3 = new Float32Array(0), ax = new Float32Array(0), ay = new Float32Array(0)
   let cache: Record<string, unknown> = {}
-  let last = -1, p = 0
+  let last = -1, p = 0, px = 1
   /** On-screen scale of the stage (CSS transform), so measured rects can be turned back into layout px. */
   const scaleOf = () => (stage.offsetWidth ? stage.getBoundingClientRect().width / stage.offsetWidth : 1)
 
@@ -108,9 +108,11 @@ export function createTokenShuffle(stage: HTMLElement, layer: HTMLElement, final
     stage.style.setProperty('--box-w', `${width}px`)
     stage.style.setProperty('--box-h', `${height}px`)
     cols = Math.ceil(width / CW); rows = Math.ceil(height / CH)
-    const dpr = Math.min(2, window.devicePixelRatio || 1)
-    canvas.width = Math.round((width + SPILL * 2) * dpr); canvas.height = Math.round((height + SPILL * 2) * dpr)
-    ctx.setTransform(dpr, 0, 0, dpr, SPILL * dpr, SPILL * dpr)
+    // draw at the exact on-screen resolution: layout px × the stage's fit scale × device pixel ratio, so one canvas pixel
+    // is one screen pixel (a canvas at layout resolution would be resampled by the scale and look soft)
+    px = Math.min(3, window.devicePixelRatio || 1) * k
+    canvas.width = Math.round((width + SPILL * 2) * px); canvas.height = Math.round((height + SPILL * 2) * px)
+    ctx.setTransform(px, 0, 0, px, SPILL * px, SPILL * px)
     const n = cols * rows
     let seed = 7
     const next = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 }
@@ -146,6 +148,8 @@ export function createTokenShuffle(stage: HTMLElement, layer: HTMLElement, final
 
   const env: Env = {
     ctx, CW, CH, GLYPHS,
+    get px() { return px },
+    snap: v => Math.round(v * px) / px,
     get width() { return width }, get height() { return height }, get cols() { return cols }, get rows() { return rows },
     get n() { return cols * rows }, get rand() { return rand }, get r2() { return r2 }, get r3() { return r3 }, get ax() { return ax }, get ay() { return ay },
     get src() { return src! }, get dst() { return dst! }, get srcBoxes() { return srcBoxes }, get dstBoxes() { return dstBoxes }, get cache() { return cache },
