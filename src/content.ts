@@ -151,7 +151,7 @@ export const content: PortfolioContent = {
   record: {
     years: { value: '10+', label: 'years across engineering, data and AI' },
     members: { value: '4M+', label: 'members served by the recommendation platform I built' },
-    students: { value: '80+', title: 'Sharing the process.', label: 'Students taught in Deep Learning workshops as an Hourly Paid Academic, University of Salford' },
+    students: { value: '80+', title: 'Deep Learning students', label: 'Taught in workshops as an Hourly Paid Academic, University of Salford' },
     degrees: { value: '3', title: 'Degrees', label: 'BSc · MSc · MPhil' },
     countries: { value: '2', title: 'Countries', label: 'Iran · UK' },
   },

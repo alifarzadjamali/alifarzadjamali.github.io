@@ -462,6 +462,8 @@ button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration
 .record.is-joined .record-anchor{top:calc(100svh + 20px)}
 .record.is-joined .record-anchor.is-end{top:calc(100svh + var(--hold) + var(--morph) + 20px)}
 .record-stage{position:sticky;top:76px;height:calc(100svh - 76px);overflow:hidden}
+/* scale-to-fit: everything on the pinned screen shrinks uniformly when it is taller than the stage (--fit set in RecordSection.tsx) */
+.record-fit{position:absolute;left:50%;top:50%;width:calc(100% / var(--fit,1));height:calc(100% / var(--fit,1));transform:translate(-50%,-50%) scale(var(--fit,1))}
 .record-layer,.record-finale{position:absolute;inset:0}
 .record-layer{display:flex;align-items:center;background:var(--bg-1)}
 .record-layer .record-bento{width:100%}
@@ -521,6 +523,9 @@ button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration
 .record-finale .contact-section{padding:0;align-items:center}
 .record-finale .section-heading h2{font-size:clamp(36px,3.8vw,62px)}
 .record-finale .site-footer{padding:14px 0 0;border-top:1px solid var(--fg-7)}
+/* CV + Contact + footer sit together, centred in the shared box (no stretched gaps between them) */
+.record-finale{justify-content:center}
+.record-finale .contact-section{flex:none;padding:32px 0}
 
 /* nav jump target for Projects (see App.tsx): section top normally; with the intro joined, just past the hand-off */
 .projects-section{position:relative}
@@ -597,3 +602,15 @@ button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration
 /* the shared text is identical on both pages: show only the new copy, scaling from the old box (no double-image ghost) */
 ::view-transition-old(project-pills),::view-transition-old(project-kicker),::view-transition-old(project-title){animation:none;opacity:0}
 ::view-transition-new(project-pills),::view-transition-new(project-kicker),::view-transition-new(project-title){animation:none;height:100%;object-fit:fill}
+
+/* pinned Research + CV/Contact screens are scaled down to fit (see .record-fit), so their small text moves up one size step
+   (11→13, 12→14, 13–14→15, 15–16→16–17); headings and big numbers keep their size */
+.record-stage .record-kicker,.record-stage .record-row em,.record-stage .record-paper em{font-size:14px}
+.record-stage .record-tag,.record-stage .mini-label,.record-stage .section-kicker,.record-stage .contact-topic label,.record-stage .footer-inner{font-size:13px}
+.record-stage .record-row i,.record-stage .record-paper i,.record-stage .record-pair span,.record-stage .contact-topic select,.record-stage .contact-topic a,.record-stage .copy-email-row button,.record-stage .copy-email-row span,.record-stage .contact-links .location,.record-stage .inline-status{font-size:15px}
+.record-stage .record-stat span,.record-stage .record-link,.record-stage .cv-panel p{font-size:16px}
+.record-stage .record-row b,.record-stage .record-paper b,.record-stage .contact-intro{font-size:17px}
+/* the scaled screens keep close to the site width on screen (60px side gutters, clear of the section dots) instead of shrinking with the scale:
+   wider columns wrap less, so the content is shorter and needs less scaling */
+.record-stage .record-inner{width:min(100% - 120px / var(--fit,1),1320px / var(--fit,1));max-width:none}
+.record-stage .record-finale .container{max-width:none}

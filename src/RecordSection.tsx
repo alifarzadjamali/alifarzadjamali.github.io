@@ -34,12 +34,14 @@ export function RecordSection({ stories, finale }: { stories: boolean; finale: (
   const gridRef = useRef<HTMLDivElement>(null)
   const layerRef = useRef<HTMLDivElement>(null)
   const finaleRef = useRef<HTMLDivElement>(null)
+  const fitRef = useRef<HTMLDivElement>(null)
   const tokensRef = useRef<HTMLCanvasElement>(null)
 
   // columns are 5% taller than their content: measure the natural height, then set the grid to 105% (tiles grow, text stays put)
+  // (pinned mode does this itself in fitScreen below, so the measurements run in a fixed order)
   useEffect(() => {
     const grid = gridRef.current
-    if (!grid) return
+    if (!grid || joined) return
     const fit = () => {
       grid.style.height = ''
       if (window.innerWidth <= 1000) return
@@ -56,9 +58,40 @@ export function RecordSection({ stories, finale }: { stories: boolean; finale: (
     if (!joined) return
     const wrapper = wrapperRef.current
     const stage = stageRef.current
-    const layer = layerRef.current, finaleLayer = finaleRef.current, tokens = tokensRef.current
-    if (!wrapper || !stage || !layer || !finaleLayer || !tokens) return
-    const shuffle = createTokenShuffle(stage, layer, finaleLayer, tokens)
+    const layer = layerRef.current, finaleLayer = finaleRef.current, tokens = tokensRef.current, fitBox = fitRef.current, grid = gridRef.current
+    const inner = layer?.querySelector<HTMLElement>('.record-inner'), bento = layer?.querySelector<HTMLElement>('.record-bento')
+    if (!wrapper || !stage || !layer || !finaleLayer || !tokens || !fitBox || !grid || !inner || !bento) return
+    const shuffle = createTokenShuffle(fitBox, layer, finaleLayer, tokens)
+    /**
+     * Both screens use fixed-size type, so on shorter laptop screens they are taller than the pinned stage (which clips them).
+     * Lay them out at natural size, make the shared box tall enough for CV + Contact too, then scale the whole stage
+     * down uniformly until it fits. Tall screens are untouched (scale stays 1).
+     */
+    const layoutAt = (scale: number) => {
+      stage.style.setProperty('--fit', scale.toFixed(4))
+      inner.style.minHeight = ''
+      grid.style.height = ''
+      grid.style.height = `${Math.round(grid.offsetHeight * 1.05)}px`
+      shuffle.resize() // places the finale in the bento's box (its width decides how CV + Contact wrap)
+      const part = (selector: string) => finaleLayer.querySelector<HTMLElement>(selector)?.offsetHeight ?? 0
+      const finaleNeeds = part('.cv-section') + part('.contact-section > .container') + part('.site-footer')
+      if (finaleNeeds > inner.offsetHeight) inner.style.minHeight = `${Math.ceil(finaleNeeds)}px`
+      // breathing room above and below: ~5% of the screen height per side (24–56px)
+      const room = stage.clientHeight - 2 * Math.min(56, Math.max(24, stage.clientHeight * 0.05))
+      return Math.min(1, room / bento.offsetHeight)
+    }
+    // a scaled stage is also laid out wider (width / scale), so text wraps into fewer lines and needs less shrinking;
+    // a few passes settle the scale, the last one guarantees it fits
+    const fitScreen = () => {
+      let scale = 1
+      for (let pass = 0; pass < 4; pass++) {
+        const next = layoutAt(scale)
+        if (Math.abs(next - scale) < 0.005) break
+        scale = next
+      }
+      const fits = Math.min(scale, layoutAt(scale))
+      if (fits < scale) { stage.style.setProperty('--fit', fits.toFixed(4)); shuffle.resize() }
+    }
     let frame = 0
     const update = () => {
       frame = 0
@@ -70,12 +103,16 @@ export function RecordSection({ stories, finale }: { stories: boolean; finale: (
       stage.classList.toggle('show-finale', p > 0.86)
     }
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
-    const resize = () => { shuffle.resize(); schedule() }
+    const resize = () => { fitScreen(); schedule() }
+    fitScreen()
     update()
     void document.fonts.ready.then(resize)
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', resize)
-    return () => { cancelAnimationFrame(frame); shuffle.dispose(); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', resize) }
+    return () => {
+      cancelAnimationFrame(frame); shuffle.dispose(); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', resize)
+      stage.style.removeProperty('--fit'); inner.style.minHeight = ''; grid.style.height = ''
+    }
   }, [joined])
 
   const { record, research, education } = content
@@ -142,9 +179,11 @@ export function RecordSection({ stories, finale }: { stories: boolean; finale: (
       <span className="record-anchor is-end" id="cv" />
       <span className="record-anchor is-end" id="contact" />
       <div className="record-stage" ref={stageRef}>
-        <div className="record-layer" ref={layerRef}>{bento}</div>
-        <div className="record-finale" ref={finaleRef}>{finale(true)}</div>
-        <canvas className="record-tokens" ref={tokensRef} aria-hidden="true" />
+        <div className="record-fit" ref={fitRef}>
+          <div className="record-layer" ref={layerRef}>{bento}</div>
+          <div className="record-finale" ref={finaleRef}>{finale(true)}</div>
+          <canvas className="record-tokens" ref={tokensRef} aria-hidden="true" />
+        </div>
       </div>
     </div>
   )
