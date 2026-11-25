@@ -11,7 +11,7 @@ const figureAlt = (project: Project) => project.visual === 'fabric'
   : `${project.title}: floor plan with segmentation prediction and reference mask`
 
 /** Same header as the home page; links jump back into the home page's sections. */
-function DetailHeader() {
+export function DetailHeader({ current = '#projects' }: { current?: string }) {
   const [open, setOpen] = useState(false)
   return (
     <header className="site-header">
@@ -19,7 +19,7 @@ function DetailHeader() {
         <a className="wordmark" href="/" aria-label="Farzad Jamali, home"><PixelLogo className="wordmark-icon" /><span className="wordmark-text">ARZAD JAMALI</span></a>
         <button className="menu-toggle" type="button" aria-expanded={open} aria-controls="site-navigation" aria-label={open ? 'Close navigation' : 'Open navigation'} onClick={() => setOpen(!open)}><span /><span /></button>
         <nav id="site-navigation" className={open ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
-          {navigation.map(([label, href]) => <a key={href} href={`/${href}`} aria-current={href === '#projects' ? 'location' : undefined} onClick={() => setOpen(false)}>{label}</a>)}
+          {navigation.map(([label, href]) => <a key={href} href={`/${href}`} aria-current={href === current ? 'location' : undefined} onClick={() => setOpen(false)}>{label}</a>)}
           <a className="nav-cv" href={content.cv.href} download onClick={() => setOpen(false)}>CV</a>
         </nav>
       </div>

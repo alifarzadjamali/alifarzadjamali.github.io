@@ -8,6 +8,7 @@ import { PixelLogo } from './PixelLogo'
 import { IntroTransition, useIntroEnabled } from './IntroTransition'
 import { ProjectStories, useStoriesEnabled } from './ProjectStory'
 import { navigation } from './navigation'
+import { useLogoEgg } from './rig/egg'
 
 
 const quickNavItems = [
@@ -66,6 +67,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
+  const onLogoClick = useLogoEgg()
   const [localTime, setLocalTime] = useState('')
   const [year, setYear] = useState('')
   const [focusIndex, setFocusIndex] = useState(0)
@@ -227,7 +229,7 @@ function App() {
       <header className="site-header">
         <div className="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(scrollProgress)} style={{ width: `${scrollProgress}%` }} />
         <div className="container header-inner">
-          <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top"><PixelLogo className="wordmark-icon" /><span className="wordmark-text">ARZAD JAMALI</span></a>
+          <a className="wordmark" href="#top" aria-label="Farzad Jamali, back to top" onClick={onLogoClick}><PixelLogo className="wordmark-icon" /><span className="wordmark-text">ARZAD JAMALI</span></a>
           <button ref={menuButtonRef} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
           <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Primary navigation">
             <button className="mobile-search" type="button" onClick={openSearch}>Search sections and projects</button>

@@ -1,0 +1,20 @@
+{
+  "name": "HYPERION",
+  "subtitle": "A personal hardware archive",
+  "updated": "2026-11-16",
+  "hero": ["Ryzen 5 9600X", "GeForce RTX 5070 Ti", "32 GB DDR5", "5 TB SSD"],
+  "components": [
+    {"category":"Core","icon":"◈","name":"AMD Ryzen 5 9600X","role":"Processor","status":"detected","facts":["Zen 5 · AM5","6 cores / 12 threads","3.9 GHz base · up to 5.4 GHz boost","65 W default TDP · 32 MB L3"],"source":"https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-5-9600x.html"},
+    {"category":"Core","icon":"▣","name":"NVIDIA GeForce RTX 5070 Ti","role":"Graphics card","status":"detected","facts":["NVIDIA Blackwell architecture","8,960 CUDA cores","16 GB GDDR7 · 256-bit memory interface","DLSS 4 · fourth-generation ray tracing"],"source":"https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/"},
+    {"category":"Core","icon":"⌘","name":"ASUS ROG STRIX B650-A GAMING WIFI","role":"Motherboard","status":"detected","facts":["AMD B650 · AM5 · ATX","Board revision 1.xx","BIOS 3035","MediaTek Wi-Fi 6E MT7922 · Intel I226-V Ethernet"],"source":"https://rog.asus.com/motherboards/rog-strix/rog-strix-b650-a-gaming-wifi-model/"},
+    {"category":"Core","icon":"▥","name":"Crucial Pro DDR5 · 32 GB","role":"Memory","status":"detected","facts":["2 × 16 GB","Part CP16G60C36U5W.M8D3","Currently reported at 5600 MT/s","Rated speed may differ from current speed"],"source":""},
+    {"category":"Storage","icon":"▤","name":"Samsung 990 EVO Plus · 4 TB","role":"SSD / physical drive 1","status":"detected","facts":["NVMe solid state storage","Windows reports 4,000,784,417,280 bytes"],"source":"https://semiconductor.samsung.com/consumer-storage/internal-ssd/990-evo-plus/"},
+    {"category":"Storage","icon":"▤","name":"Predator GM7 · 1 TB","role":"SSD / physical drive 0","status":"detected","facts":["NVMe solid state storage","Windows reports 1,024,203,640,320 bytes"],"source":"https://www.predatorstorage.com/products/predator-gm7-pcie-4-ssd.html"},
+    {"category":"Desk","icon":"▰","name":"ASUS TUF Gaming VG27AQL5A","role":"Monitor","status":"detected","facts":["27-inch Fast IPS · LED backlight","2560 × 1440 QHD","Up to 210 Hz overclocked","0.3 ms GTG minimum · 95% DCI-P3"],"source":"https://www.asus.com/uk/displays-desktops/monitors/tuf-gaming/tuf-gaming-vg27aql5a/techspec/"},
+    {"category":"Desk","icon":"⌨","name":"ASUS TUF Gaming K1","role":"Keyboard","status":"usb-match","facts":["USB ID 0B05:1945","Full-size membrane keyboard","5-zone RGB · Aura Sync","1000 Hz USB report rate"],"source":"https://www.asus.com/uk/accessories/keyboards/tuf-gaming/tuf-gaming-k1/techspec/"},
+    {"category":"Desk","icon":"◉","name":"Logitech G502 SE HERO","role":"Mouse","status":"usb-match","facts":["USB ID 046D:C08B","Wired gaming mouse","Exact retail variant inferred from USB ID"],"source":"https://support.logi.com/hc/en-us/articles/360036353913-Getting-Started-G502-SE-HERO-Gaming-Mouse"},
+    {"category":"Core","icon":"⬡","name":"Lian Li O11 Dynamic Mini V2 Flow","role":"Chassis","status":"owner","facts":["Pillar-free tempered glass showcase","Five pre-installed reverse-blade fans","Angled base channels air toward the GPU","Compact 45.38 L design · 360 mm radiator support"],"source":"https://lian-li.com/product/o11-dynamic-mini-v2/"},
+    {"category":"Core","icon":"❄","name":"ARCTIC Liquid Freezer III Pro 360","role":"CPU cooling","status":"owner","facts":["360 mm all-in-one liquid cooler · black","38 mm radiator · three P12 Pro 120 mm fans","PWM pump and integrated VRM fan","AM5 / AM4 compatible"],"source":"https://www.arctic.de/en/Liquid-Freezer-III-Pro-360/ACFRE00180/"},
+    {"category":"Core","icon":"ϟ","name":"Corsair 850 W 80 PLUS Gold","role":"Power supply","status":"owner","facts":["850 W power capacity","80 PLUS Gold efficiency class","Corsair power delivery"],"source":"https://www.corsair.com/uk/en/c/psu"}
+  ]
+}

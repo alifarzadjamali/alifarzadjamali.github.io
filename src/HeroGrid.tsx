@@ -1,11 +1,14 @@
 import { useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { SimpleIcon } from 'simple-icons'
 import { ALL_ICONS, brandColor, rasterize, seededShuffle } from './techIcons'
+import { CASE_ICON, QUESTION_ICON, enterRig } from './rig/egg'
 
 const COLS = 12
 const ROWS = 12
 const BIG = 24
 /** Every tile gets a logo: all 12 icons, 12 times each, in a fixed random order. */
+/** Easter egg: this one tile holds a PC tower instead of a tech logo and opens the hidden /rig/ page. */
+const RIG_TILE = 8 * COLS + 9
 const TILE_ICONS = seededShuffle(Array.from({ length: COLS * ROWS }, (_, i) => ALL_ICONS[i % ALL_ICONS.length]!), 7)
 
 /** Shuffle-bag: every hover takes the next logo; a fresh shuffle starts only after all 12 have shown. */
@@ -59,11 +62,12 @@ export function HeroGrid({ onHover }: { onHover?: (hovering: boolean) => void })
       }}
     >
       <p className="grid-caption"><span>MY TECH STACK</span> · HOVER TO EXPLORE</p>
-      <svg className="tile-defs" width="0" height="0">{ALL_ICONS.map(icon => <symbol key={icon.slug} id={`ti-${icon.slug}`} viewBox="0 0 24 24"><path d={icon.path} /></symbol>)}</svg>
+      <svg className="tile-defs" width="0" height="0">{ALL_ICONS.map(icon => <symbol key={icon.slug} id={`ti-${icon.slug}`} viewBox="0 0 24 24"><path d={icon.path} /></symbol>)}<symbol id="ti-rig" viewBox="0 0 24 24"><path d={CASE_ICON.path} /></symbol></svg>
       {TILE_ICONS.map((icon, index) => {
         const x = index % COLS
         const y = Math.floor(index / COLS)
         const distance = Math.hypot(x - origin.x, y - origin.y)
+        if (index === RIG_TILE) return <span key={index} className="rig-tile" style={{ '--d': distance.toFixed(2), '--c': 'var(--brand-cyan)' } as CSSProperties} onPointerEnter={event => { if (event.pointerType !== 'touch') setShown(QUESTION_ICON) }} onClick={() => enterRig()}><svg><use href="#ti-rig" /></svg></span>
         return <span key={index} data-field={Math.floor(ALL_ICONS.indexOf(icon) / 4)} style={{ '--d': distance.toFixed(2), '--c': brandColor(icon.hex) } as CSSProperties} onPointerDown={() => setOrigin(current => ({ x, y, run: current.run + 1 }))}><svg><use href={`#ti-${icon.slug}`} /></svg></span>
       })}
       {shown && <BigIcon key={shown.slug} icon={shown} />}
