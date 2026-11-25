@@ -49,6 +49,19 @@ export function enterRig(event?: MouseEvent) {
   // after this click has finished bubbling, so the click that started it doesn't also skip it
   window.setTimeout(() => { window.addEventListener('keydown', skip, { once: true }); window.addEventListener('pointerdown', skip, { once: true }) }, 0)
 
+  // Back button: the browser may restore this page from its back/forward cache exactly as it was left,
+  // i.e. deleted and covered by the maximised terminal. Put everything back.
+  const restore = (pageEvent: PageTransitionEvent) => {
+    if (!pageEvent.persisted) return
+    window.removeEventListener('pageshow', restore)
+    window.removeEventListener('keydown', skip)
+    window.removeEventListener('pointerdown', skip)
+    term.remove()
+    document.querySelectorAll('.egg-zap').forEach(el => el.classList.remove('egg-zap'))
+    root.classList.remove('egg-running', 'egg-shake')
+  }
+  window.addEventListener('pageshow', restore)
+
   void (async () => {
     await wait(30); term.classList.add('is-on'); await wait(380)
     await type('sudo rm -rf /portfolio')
